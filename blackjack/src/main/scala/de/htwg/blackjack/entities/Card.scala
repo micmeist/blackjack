@@ -5,6 +5,6 @@ package de.htwg.blackjack.entities
  */
 class Card (color: String, number: String, weight: Int ) {
 
-  def getFullString: String  = "Color: " + color + " Number: " + number + " Weight: " + weight
+  override def toString: String  = "Color: " + color + " Number: " + number + " Weight: " + weight
 
 }

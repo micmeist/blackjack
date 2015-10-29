@@ -1,14 +1,11 @@
-package de.htwg.blackjack
+package de.htwg.blackjack.controller
 
 import de.htwg.blackjack.entities.Card
 
 /**
- * Created by micmeist on 19.10.2015.
+ * Created by micmeist on 29.10.2015.
  */
-object Game {
-  def main(args: Array[String]) {
-    print(generateCards.toString())
-  }
+object GameCardStackFactory {
 
   def generateCards: List[Card] = {
     var cards: List[Card] = List()
@@ -41,5 +38,4 @@ object Game {
     }
     return cards
   }
-
 }

@@ -1,0 +1,10 @@
+@import de.htwg.core.entities.Game
+@(game: Game)
+
+@main("Game") {
+
+    @game
+
+    <a class="button" href="@routes.Application.startNewRound()">Start new Round</a>
+
+}

@@ -16,27 +16,18 @@ class Round(game: Game) {
   }
 
   def getHandOfPlayer(player: Player): Hand = {
-    var handOption: Option[Hand] = playersAndHands.get(player)
+    val handOption: Option[Hand] = playersAndHands.get(player)
     handOption.get
   }
 
-  @deprecated
-  def nextCardHumanPlayer: Unit = {
-    nextCardForPlayer(game.players(1))
-  }
-
-  @deprecated
-  def nextCardBank: Unit = {
-    nextCardForPlayer(game.players.head)
-  }
-
-  def nextCardForPlayer(player: Player): Unit = {
+  /**
+    * Hit means player gets another card.
+    * Adds another card from the game deck to players hand
+    * @param player the player who gets another card to his hand
+    */
+  def hit(player: Player): Unit = {
     val handOption: Option[Hand] = playersAndHands.get(player)
     handOption.get.addCardToHand(game.getNextCardFromDeck)
-  }
-
-  def hit = {
-    nextCardHumanPlayer
   }
 
   private def deal: Unit = {

@@ -19,8 +19,8 @@ object GameTui extends Tui {
       case "n" =>
         RoundTui.start(GameCoreController.startNewRound(game))
         true
-      case "b" => ???
-      case _ => ???
+      case "b" => false
+      case _ => true
     }
   }
 

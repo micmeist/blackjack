@@ -22,9 +22,9 @@ object RoundTui extends Tui {
 
   def proccessUserInput(s: String, round: Round, player: Player): Boolean = {
     s match {
-      case "h" => round.hit
+      case "h" => round.hit(player)
         if (round.getHandOfPlayer(player).isBust) {
-          print("Player " + player.name + ", your hand is bust")
+          println("Player " + player.name + ", your hand is bust")
           false
         } else {
           true
@@ -48,7 +48,7 @@ object RoundTui extends Tui {
         var continue: Boolean = true
         while (continue) {
           printCardsOfPlayers(round)
-          print("Player " + player.name + ", what do you want to do?")
+          println("Player " + player.name + ", what do you want to do?")
           printMenu
           continue = proccessUserInput(StdIn.readLine(), round, player)
         }

@@ -7,10 +7,11 @@ import scala.collection.mutable
   */
 class Round(game: Game) {
 
+  //TODO: use immutable List
   var playersAndHands: mutable.Map[Player, Hand] = null
-  createPlayersHands
   deal
 
+  //TODO: Some Players may be not in round
   def getPlayers: List[Player] = {
     game.players
   }
@@ -30,7 +31,25 @@ class Round(game: Game) {
     handOption.get.addCardToHand(game.getNextCardFromDeck)
   }
 
+  def getWinners: List[Player] = {
+    val banksHand: Hand = playersAndHands.last._2
+    val winners: List[Player] = List()
+    for (playerAndHand <- playersAndHands) {
+      if (!playerAndHand._1.isInstanceOf[BankPlayer] && !playerAndHand._2.isBust) {
+        playerAndHand._2.getSum match {
+          case 21 => playerAndHand._1 :: winners
+          case sum =>
+            if(sum > banksHand.getSum){
+              playerAndHand._1 :: winners
+            }
+        }
+      }
+    }
+    winners
+  }
+
   private def deal: Unit = {
+    createPlayersHands
     for (x <- 0 to 1) {
       for (playerAndHand <- playersAndHands) {
         playerAndHand._2.addCardToHand(game.getNextCardFromDeck)
@@ -48,7 +67,6 @@ class Round(game: Game) {
       }
       playersAndHands += (player -> hand)
     }
-
   }
 
 }

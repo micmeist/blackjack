@@ -16,13 +16,18 @@ abstract class Hand {
     * @return true if sum is > 21, false otherwise
     */
   final def isBust: Boolean = {
-    var sum = 0
     if (cards.isEmpty) {
       false
     } else {
-      cards.foreach(card => sum += card.getWeight)
-      sum > 21
+      getSum > 21
     }
+  }
+
+  final def getSum: Int = {
+    var sum = 0
+    //TODO: Do this using a scala specific nice way?
+    cards.foreach(card => sum += card.getWeight)
+    sum
   }
 
   /**

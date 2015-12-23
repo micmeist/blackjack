@@ -17,9 +17,7 @@ class HandTest extends FlatSpec with Matchers with BeforeAndAfter {
     test()
   }
 
-  private def getTestCard(weight: Int): Card = {
-    new Card("Test", "Test", weight)
-  }
+
 
   "An empty hand of Bank" should "not be too high" in {
     executeTest(() => {
@@ -35,23 +33,53 @@ class HandTest extends FlatSpec with Matchers with BeforeAndAfter {
 
   "The hand 10,10" should "not be too high" in {
     executeTest(() => {
-      hand.cards = List(getTestCard(10), getTestCard(10))
+      hand.cards = List(TestUtilites.getTestCard(10), TestUtilites.getTestCard(10))
       hand.isBust should be(false)
     })
   }
 
   "The hand 10,10,1" should "not be too high" in {
     executeTest(() => {
-      hand.cards = List(getTestCard(10), getTestCard(10), getTestCard(1))
+      hand.cards = List(TestUtilites.getTestCard(10), TestUtilites.getTestCard(10), TestUtilites.getTestCard(1))
       hand.isBust should be(false)
     })
   }
 
   "The hand 10,10,2" should "be too high" in {
     executeTest(() => {
-      hand.cards = List(getTestCard(10), getTestCard(10), getTestCard(2))
+      hand.cards = List(TestUtilites.getTestCard(10), TestUtilites.getTestCard(10), TestUtilites.getTestCard(2))
       hand.isBust should be(true)
     })
+  }
+
+  "The sum of Players hand" should "be 0 for empty Hand" in {
+    val hand: Hand = new HandHumanPlayer
+    hand.cards = List()
+    hand.getSum should be(0)
+  }
+
+  it should "be 20 for K,K" in {
+    val hand: Hand = new HandHumanPlayer
+    hand.cards = List(new Card("Kreuz", "K", 10), new Card("Pik", "K", 10))
+    hand.getSum should be(20)
+  }
+
+  it should "be 4 for 2,2" in {
+    val hand: Hand = new HandHumanPlayer
+    hand.cards = List(new Card("Kreuz", "2", 2), new Card("Pik", "2", 2))
+    hand.getSum should be(4)
+  }
+
+  it should "be 14 for 2,2,10" in {
+    val hand: Hand = new HandHumanPlayer
+    hand.cards = List(new Card("Kreuz", "2", 2), new Card("Pik", "2", 2), new Card("Pik", "K", 10))
+    hand.getSum should be(14)
+  }
+
+  it should "be 2 for the single Card 2" in {
+    val hand: Hand = new HandHumanPlayer
+    hand.cards = List(new Card("Kreuz", "2", 2))
+    hand.getSum should be(2)
   }
 
   "A Players hand" should "be fully visible" in {
@@ -86,7 +114,7 @@ class HandTest extends FlatSpec with Matchers with BeforeAndAfter {
     val hand: Hand = new HandBank
     hand.addCardToHand(cardOne)
     hand.addCardToHand(cardTwo)
-    hand.getVisibleCards()(1) should not be(cardOne)
+    hand.getVisibleCards()(1) should not be (cardOne)
     hand.getVisibleCards().head should be(cardTwo)
   }
 

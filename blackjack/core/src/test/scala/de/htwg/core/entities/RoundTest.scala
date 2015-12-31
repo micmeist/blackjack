@@ -44,16 +44,55 @@ class RoundTest extends FlatSpec with Matchers with BeforeAndAfter {
   }
 
   "In a Round where Players hand is higher than banks hand" should "player be winner" in {
-    val playerHand: HandHumanPlayer = new HandHumanPlayer
-    playerHand.cards = List(TestUtilites.getTestCard(10), TestUtilites.getTestCard(10))
-    val bankHand: HandBank = new HandBank
-    bankHand.cards = List(TestUtilites.getTestCard(10), TestUtilites.getTestCard(9))
+    val playerHand :HandHumanPlayer = TestUtilites.getTestHandHumanPlayer(Array(10,10))
+    val bankHand : HandBank = TestUtilites.getTestHandBank(Array(10,9))
     val player: HumanPlayer = new HumanPlayer
     val bank: BankPlayer = new BankPlayer
-    round.playersAndHands = mutable.Map((bank, bankHand), (player, playerHand))
+    round.playersAndHands = mutable.LinkedHashMap((player, playerHand), (bank, bankHand))
     //Bank has to be last player
     assert(round.playersAndHands.last._1.isInstanceOf[BankPlayer])
     round.getWinners.contains(player) && !round.getWinners.contains(bank) should be(true)
   }
 
+  "When banks hand is 20 players hand" should "be winner when its sum is 21" in {
+    val bankHand : HandBank = TestUtilites.getTestHandBank(Array(10,10))
+    val playerHand :HandHumanPlayer = TestUtilites.getTestHandHumanPlayer(Array(10,5,6))
+    round.isPlayerHandWinner(bankHand, playerHand) should be (true)
+  }
+
+  it should "not be winner when its sum is 20" in {
+    val bankHand : HandBank = TestUtilites.getTestHandBank(Array(10,10))
+    val playerHand :HandHumanPlayer = TestUtilites.getTestHandHumanPlayer(Array(10,10))
+    round.isPlayerHandWinner(bankHand, playerHand) should be (false)
+  }
+
+  it should "not be winner when its sum is 19" in {
+    val bankHand : HandBank = TestUtilites.getTestHandBank(Array(10,10))
+    val playerHand :HandHumanPlayer = TestUtilites.getTestHandHumanPlayer(Array(10,9))
+    round.isPlayerHandWinner(bankHand, playerHand) should be (false)
+  }
+
+  "When banks hand is 21 players hand" should "be winner when its sum is 21" in {
+    val bankHand : HandBank = TestUtilites.getTestHandBank(Array(10,5,6))
+    val playerHand :HandHumanPlayer = TestUtilites.getTestHandHumanPlayer(Array(10,5,6))
+    round.isPlayerHandWinner(bankHand, playerHand) should be (true)
+  }
+
+  it should "not be winner when its sum is 20" in {
+    val bankHand : HandBank = TestUtilites.getTestHandBank(Array(10,5,6))
+    val playerHand :HandHumanPlayer = TestUtilites.getTestHandHumanPlayer(Array(10,10))
+    round.isPlayerHandWinner(bankHand, playerHand) should be (false)
+  }
+
+  "When banks hand is 18 players hand" should "be winner when its sum is 19" in {
+    val bankHand : HandBank = TestUtilites.getTestHandBank(Array(10,8))
+    val playerHand :HandHumanPlayer = TestUtilites.getTestHandHumanPlayer(Array(10,9))
+    round.isPlayerHandWinner(bankHand, playerHand) should be (true)
+  }
+
+  it should "not be winner when its sum is 10" in {
+    val bankHand : HandBank = TestUtilites.getTestHandBank(Array(10,9))
+    val playerHand :HandHumanPlayer = TestUtilites.getTestHandHumanPlayer(Array(10))
+    round.isPlayerHandWinner(bankHand, playerHand) should be (false)
+  }
 }

@@ -8,7 +8,7 @@ import scala.collection.mutable
 class Round(game: Game) {
 
   //TODO: use immutable List
-  var playersAndHands: mutable.Map[Player, Hand] = null
+  var playersAndHands: mutable.LinkedHashMap[Player, Hand] = null
   deal
 
   //TODO: Some Players may be not in round
@@ -32,20 +32,31 @@ class Round(game: Game) {
   }
 
   def getWinners: List[Player] = {
-    val banksHand: Hand = playersAndHands.last._2
-    val winners: List[Player] = List()
-    for (playerAndHand <- playersAndHands) {
-      if (!playerAndHand._1.isInstanceOf[BankPlayer] && !playerAndHand._2.isBust) {
-        playerAndHand._2.getSum match {
-          case 21 => playerAndHand._1 :: winners
-          case sum =>
-            if(sum > banksHand.getSum){
-              playerAndHand._1 :: winners
-            }
+    val banksHand: HandBank = playersAndHands.last._2.asInstanceOf[HandBank]
+    var winners: List[Player] = List()
+    playersAndHands.foreach(playerAndHand =>
+      if (!playerAndHand._1.isInstanceOf[BankPlayer]) {
+        if (isPlayerHandWinner(banksHand, playerAndHand._2.asInstanceOf[HandHumanPlayer])) {
+          winners = playerAndHand._1 :: winners
         }
       }
-    }
+    )
     winners
+  }
+
+  def isPlayerHandWinner(banksHand: HandBank, playerHand: HandHumanPlayer): Boolean = {
+    if (playerHand.isBust) {
+      return false
+    }
+    playerHand.getSum match {
+      case 21 => true
+      case sum =>
+        if (sum > banksHand.getSum) {
+          true
+        } else {
+          false
+        }
+    }
   }
 
   private def deal: Unit = {
@@ -58,7 +69,7 @@ class Round(game: Game) {
   }
 
   private def createPlayersHands: Unit = {
-    playersAndHands = mutable.Map()
+    playersAndHands = mutable.LinkedHashMap()
     for (player <- game.players) {
       var hand: Hand = null
       player match {

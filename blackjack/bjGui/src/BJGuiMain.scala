@@ -10,6 +10,48 @@ object BJGuiMain extends SimpleSwingApplication {
   def top = new MainFrame {
     
     title = "Blackjack"
+    
+    // alle Kartenbilder als Labelicons
+    // atm nur Spade
+    val spade_2  = new Label {
+      icon = new ImageIcon("spade_2.png")
+    }
+    val spade_3  = new Label {
+      icon = new ImageIcon("spade_3.png")
+    }
+    val spade_4  = new Label {
+      icon = new ImageIcon("spade_4.png")
+    }
+    val spade_5  = new Label {
+      icon = new ImageIcon("spade_5.png")
+    }
+    val spade_6  = new Label {
+      icon = new ImageIcon("spade_6.png")
+    }
+    val spade_7  = new Label {
+      icon = new ImageIcon("spade_7.png")
+    }
+    val spade_8  = new Label {
+      icon = new ImageIcon("spade_8.png")
+    }
+    val spade_9  = new Label {
+      icon = new ImageIcon("spade_9.png")
+    }
+    val spade_10  = new Label {
+      icon = new ImageIcon("spade_10.png")
+    }
+    val spade_ace  = new Label {
+      icon = new ImageIcon("spade_ace.png")
+    }
+    val spade_jack  = new Label {
+      icon = new ImageIcon("spade_jack.png")
+    }
+    val spade_king  = new Label {
+      icon = new ImageIcon("spade_king.png")
+    }
+    val spade_queen  = new Label {
+      icon = new ImageIcon("spade_queen.png")
+    }    
     val bnGiveCard = new Button {
       text = "Hit me!"
     }
@@ -22,27 +64,71 @@ object BJGuiMain extends SimpleSwingApplication {
     val lblStake = new Label {
       text = "Stake: "
     }
-    val txtStakes = txtField
+    val txtStake = txtField
+    val bnNewRound = new Button {
+      text = "New Round!"
+    }
+    val bnExit = new Button {
+      text = "Exit"
+    }
     
     def txtField = new TextField {
-      text = ""
       horizontalAlignment = Alignment.Left
     }
     
-    val gridPanelW = new GridPanel(2,1) {
-      contents += bnGiveCard
-      contents += bnStand
+    val gridBagPanelE = new GridBagPanel {
+      val c = new Constraints
+      
+      c.gridx = 0
+      c.gridy = 0
+      c.ipadx= 75     
+      layout(bnGiveCard) = c
+      
+      c.gridx = 0
+      c.gridy = 1
+      c.ipadx= 75
+      layout(bnStand) = c
     }
     
-    val labelPicCenter = new Label {
+    val lblCenterDefault = new Label {
       icon = new ImageIcon("blackjack.png")
     }
-    
-    val gridPanelE = new GridPanel(2,1) {
-      contents += lblStake
-      contents += txtStakes
-      contents += bnStart
+    /*val lblCenterWon = new Label {
+      icon = new ImageIcon("winner.jpg")
     }
+    val lblCenterLost = new Label {
+      icon = new ImageIcon("lost.jpg")
+    }*/
+    
+    val gridBagPanelW = new GridBagPanel {
+      
+      val c = new Constraints
+      
+      c.gridx = 0
+      c.gridy = 0
+      layout(lblStake) = c
+      
+      c.gridx = 1
+      c.gridy = 0
+      c.ipadx = 75
+      layout(txtStake) = c
+      
+      c.gridx = 0
+      c.gridy = 1
+      c.gridwidth = 2
+      layout(bnStart) = c
+      
+      c.gridx = 0
+      c.gridy = 2
+      layout(bnNewRound) = c
+      
+      c.gridx = 0
+      c.gridy = 3
+      layout(bnExit) = c
+    }
+    
+    //beim Start jeder neuen Runde
+    startNewRound
     
     // diese dann später dynmaisch füllen
     val labelPic1 = new Label {
@@ -55,31 +141,59 @@ object BJGuiMain extends SimpleSwingApplication {
     val flowPanelS = new FlowPanel(labelPic1, labelPic2)
   
     contents = new BorderPanel {
-      layout(gridPanelW) = West
-      layout(labelPicCenter) = Center
+      layout(gridBagPanelW) = West
+      layout(lblCenterDefault) = Center
       layout(flowPanelN) = North
       layout(flowPanelS) = South
-      layout(gridPanelE) = East
+      layout(gridBagPanelE) = East
     }
     
     
     listenTo(bnGiveCard)
     listenTo(bnStand)
     listenTo(bnStart)
-    listenTo(txtStakes.keys)
+    listenTo(txtStake.keys)
     
     
     reactions += {
       case ButtonClicked(component) if component == bnGiveCard =>
         // fordere neue Karte von Kontroller an "newCard"
-        // kovertiere Kartenobjekt in GuiKomponente
+        // kovertiere Kartenobjekt in GuiKomponente->Bild
         // adde Gui Komponente zum Panel
-        //flowPanelS.contents += newCard
+        // flowPanelS.contents += newCard
       case ButtonClicked(component) if component == bnStand =>
+        // call controller logic to see if user won
+        // if (controller.userWon == true) 
+        lblCenterDefault.icon = new ImageIcon("winner.jpg")
+        // else lblPicCenter.icon = new ImageIcon("lost.jpg")
+        bnGiveCard.enabled = false
+        bnStand.enabled = false
+        bnNewRound.enabled = true
       case ButtonClicked(component) if component == bnStart =>  
-      case KeyPressed(_, Key.Enter, _, _) =>   
-        lblStake.text += txtStakes.text
+        bnStart.enabled = false
+        bnGiveCard.enabled = true
+        bnStand.enabled = true
+        // erreicht diesen bn auch nicht
+      case ButtonClicked(component) if component == bnNewRound =>  
+        startNewRound
+        // ERREICHT exit button nicht ?!
+      case ButtonClicked(component) if component == bnExit =>  
+        top.dispose()
+      case KeyPressed(_, Key.Enter, _, _) =>
+        txtStake.enabled = false
+        bnStart.enabled = true      
     }
+    
+    
+    def startNewRound = {
+      bnGiveCard.enabled = false
+      bnStand.enabled = false
+      txtStake.enabled = true
+      txtStake.text = ""
+      bnStart.enabled = false
+      bnNewRound.enabled = false
+    }
+    
   }  
   
 } 

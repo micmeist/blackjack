@@ -10,7 +10,7 @@ abstract class Player(val name: String, private var money: Double) {
     *
     * @param amount the amount to add
     */
-  def +(amount: Double): Unit = {
+  private[entities] def +(amount: Double): Unit = {
     money += amount
   }
 
@@ -19,7 +19,7 @@ abstract class Player(val name: String, private var money: Double) {
     *
     * @param amount the amount to subtract
     */
-  def -(amount: Double): Unit = {
+  private[entities] def -(amount: Double): Unit = {
     money -= amount
   }
 

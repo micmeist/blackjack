@@ -7,7 +7,7 @@ abstract class Hand {
 
   var cards: List[Card] = Nil
 
-  final def addCardToHand(card: Card): Unit = {
+  private[entities] final def addCardToHand(card: Card): Unit = {
     cards = card :: cards
   }
 

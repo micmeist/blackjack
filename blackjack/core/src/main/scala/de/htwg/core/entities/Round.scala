@@ -8,7 +8,7 @@ import scala.collection.mutable
 class Round(game: Game) {
 
   //TODO: use immutable List
-  var playersAndHands: mutable.LinkedHashMap[Player, Hand] = null
+  private[entities] var playersAndHands: mutable.LinkedHashMap[Player, Hand] = null
   deal
 
   //TODO: Some Players may be not in round
@@ -49,7 +49,7 @@ class Round(game: Game) {
     winners
   }
 
-  def isPlayerHandWinner(banksHand: HandBank, playerHand: HandHumanPlayer): Boolean = {
+  private[entities] def isPlayerHandWinner(banksHand: HandBank, playerHand: HandHumanPlayer): Boolean = {
     if (playerHand.isBust) {
       return false
     }

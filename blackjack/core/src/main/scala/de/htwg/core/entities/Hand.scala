@@ -31,7 +31,15 @@ abstract class Hand {
   }
 
   /**
-    * @return the visible cards of the given hand
+    * @return the all cards of the hand. All cards means cards that are visible to all players during the round and
+    *         cards that are not visible to all players
+    */
+  final def getAllCards(): List[Card] = {
+    cards
+  }
+
+  /**
+    * @return the cards of the hand which are visible to all players during the round
     */
   def getVisibleCards(): List[Card]
 
@@ -51,7 +59,7 @@ class HandBank extends Hand {
 class HandHumanPlayer extends Hand {
 
   override def getVisibleCards(): List[Card] = {
-    cards
+    getAllCards
   }
 
 }

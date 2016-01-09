@@ -13,10 +13,29 @@ object RoundTui extends Tui {
     println("Press a key to select an option: \n  h: hit \n s: stand")
   }
 
-  def printCardsOfPlayers(round: Round) = {
-    print("Cards: \n")
+  def printVisibleCardsOfPlayers(round: Round): Unit = {
+    println("Cards:")
     for (player <- round.getPlayers) {
-      println(player.name + " " + round.getHandOfPlayer(player).getVisibleCards())
+      println(player.name + " " + round.getHandOfPlayer(player).getVisibleCards)
+    }
+  }
+
+  def printAllCardsOfPlayers(round: Round): Unit = {
+    println("Cards:")
+    for (player <- round.getPlayers) {
+      println(player.name + " " + round.getHandOfPlayer(player).getAllCards)
+    }
+  }
+
+  def printWinners(round: Round): Unit = {
+    val winners: List[Player] = round.getWinners
+    if (winners.nonEmpty) {
+      println("Winners in this round:")
+      for (winner <- winners) {
+        println(winner.name)
+      }
+    } else {
+      println("There are no winners in this round")
     }
   }
 
@@ -47,12 +66,14 @@ object RoundTui extends Tui {
       if (!player.isInstanceOf[BankPlayer]) {
         var continue: Boolean = true
         while (continue) {
-          printCardsOfPlayers(round)
+          printVisibleCardsOfPlayers(round)
           println("Player " + player.name + ", what do you want to do?")
           printMenu
           continue = proccessUserInput(StdIn.readLine(), round, player)
         }
       }
     }
+    printAllCardsOfPlayers(round)
+    printWinners(round)
   }
 }

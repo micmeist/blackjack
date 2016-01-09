@@ -21,6 +21,11 @@ class Round(game: Game) {
     handOption.get
   }
 
+  def getHandOfBank(): HandBank = {
+    val handOption: Option[Hand] = playersAndHands.get(getPlayers.last)
+    handOption.get.asInstanceOf[HandBank]
+  }
+
   /**
     * Hit means player gets another card.
     * Adds another card from the game deck to players hand

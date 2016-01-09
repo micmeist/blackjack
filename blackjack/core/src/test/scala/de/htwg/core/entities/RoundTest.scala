@@ -20,7 +20,7 @@ class RoundTest extends FlatSpec with Matchers with BeforeAndAfter {
   }
 
   "In a new round every Player" should "have two cards" in {
-    for (playerAndHand <- round.playersAndHands) {
+    for (playerAndHand <- round.playersAndHandsAndBets) {
       if (playerAndHand._2._1.cards.length != 2) {
         fail()
       }
@@ -29,19 +29,19 @@ class RoundTest extends FlatSpec with Matchers with BeforeAndAfter {
 
   "In a new round with 2 players" should "the second Player have the second card from the deck as first card" in {
     assert(game.players.length == 2)
-    val option: Option[Tuple2[Hand, Bet]] = round.playersAndHands.get(game.players(1))
+    val option: Option[Tuple2[Hand, Bet]] = round.playersAndHandsAndBets.get(game.players(1))
     option.get._1.cards(1) should be(game.deck(1))
   }
 
   it should "the first Player have the first card from the deck as first card" in {
     assert(game.players.length == 2)
-    val option: Option[Tuple2[Hand, Bet]] = round.playersAndHands.get(game.players.head)
+    val option: Option[Tuple2[Hand, Bet]] = round.playersAndHandsAndBets.get(game.players.head)
     option.get._1.cards(1) should be(game.deck(0))
   }
 
   it should "the first Player have the third card from the deck as second card" in {
     assert(game.players.length == 2)
-    val option: Option[Tuple2[Hand, Bet]] = round.playersAndHands.get(game.players.head)
+    val option: Option[Tuple2[Hand, Bet]] = round.playersAndHandsAndBets.get(game.players.head)
     option.get._1.cards(0) should be(game.deck(2))
   }
 
@@ -50,9 +50,9 @@ class RoundTest extends FlatSpec with Matchers with BeforeAndAfter {
     val bankHand: HandBank = TestUtilites.getTestHandBank(Array(10, 9))
     val player: HumanPlayer = new HumanPlayer
     val bank: BankPlayer = new BankPlayer
-    round.playersAndHands = mutable.LinkedHashMap((player, (playerHand, new Bet(0))), (bank, (bankHand, new Bet(0))))
+    round.playersAndHandsAndBets = mutable.LinkedHashMap((player, (playerHand, new Bet(0))), (bank, (bankHand, new Bet(0))))
     //Bank has to be last player
-    assert(round.playersAndHands.last._1.isInstanceOf[BankPlayer])
+    assert(round.playersAndHandsAndBets.last._1.isInstanceOf[BankPlayer])
     round.getWinners.contains(player) && !round.getWinners.contains(bank) should be(true)
   }
 

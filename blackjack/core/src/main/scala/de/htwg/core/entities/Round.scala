@@ -7,8 +7,10 @@ import scala.collection.mutable
   */
 class Round(game: Game) {
 
+  private var finished: Boolean = false
+
   //TODO: use immutable List
-  private[entities] var playersAndHands: mutable.LinkedHashMap[Player, Tuple2[Hand, Bet]] = null
+  private[entities] var playersAndHandsAndBets: mutable.LinkedHashMap[Player, Tuple2[Hand, Bet]] = null
   deal
 
   //TODO: Some Players may be not in round
@@ -17,23 +19,34 @@ class Round(game: Game) {
   }
 
   def getHandOfPlayer(player: Player): Hand = {
-    val option: Option[Tuple2[Hand, Bet]] = playersAndHands.get(player)
+    val option: Option[Tuple2[Hand, Bet]] = playersAndHandsAndBets.get(player)
     option.get._1
   }
 
   def getHandOfBank(): HandBank = {
-    val option: Option[Tuple2[Hand, Bet]] = playersAndHands.get(getPlayers.last)
+    val option: Option[Tuple2[Hand, Bet]] = playersAndHandsAndBets.get(getBank)
     option.get._1.asInstanceOf[HandBank]
   }
 
+  private def getBank(): BankPlayer = {
+    getPlayers.last.asInstanceOf[BankPlayer]
+  }
+
   def getBetOfPlayer(player: HumanPlayer): Bet = {
-    val option: Option[Tuple2[Hand, Bet]] = playersAndHands.get(player)
+    val option: Option[Tuple2[Hand, Bet]] = playersAndHandsAndBets.get(player)
     option.get._2
   }
 
+  //TODO: Test für Fall, dass amount höher als verfügbares Geld
   def bet(player: HumanPlayer, amount: Double): Unit = {
-    playersAndHands.get(player).get._2 + amount
-    player - amount
+    var possibleAmount: Double = 0
+    if (amount > player.getMoney) {
+      possibleAmount = player.getMoney
+    } else {
+      possibleAmount = amount
+    }
+    playersAndHandsAndBets.get(player).get._2 + possibleAmount
+    player - possibleAmount
   }
 
   /**
@@ -42,14 +55,35 @@ class Round(game: Game) {
     * @param player the player who gets another card to his hand
     */
   def hit(player: Player): Unit = {
-    val handOption: Option[Tuple2[Hand, Bet]] = playersAndHands.get(player)
+    val handOption: Option[Tuple2[Hand, Bet]] = playersAndHandsAndBets.get(player)
     handOption.get._1.addCardToHand(game.getNextCardFromDeck)
   }
 
+  /**
+    * Finishes the round: Sets round status to finished, calculates winnings for players and bank and pay them out.
+    */
+  def finish(): Unit = {
+    if (!finished) {
+      val winners: List[Player] = getWinners
+      for (player <- getPlayers) {
+        val cash = playersAndHandsAndBets.get(player).get._2.getAmount()
+        if (winners.contains(player)) {
+          player + cash * 2
+          getBank() - cash * 2
+        } else {
+          getBank() + cash
+        }
+      }
+    }
+  }
+
+  /**
+    * @return the list of players who have an higher hand than the bank
+    */
   def getWinners: List[Player] = {
-    val banksHand: HandBank = playersAndHands.last._2._1.asInstanceOf[HandBank]
+    val banksHand: HandBank = playersAndHandsAndBets.last._2._1.asInstanceOf[HandBank]
     var winners: List[Player] = List()
-    playersAndHands.foreach(playerAndHand =>
+    playersAndHandsAndBets.foreach(playerAndHand =>
       if (!playerAndHand._1.isInstanceOf[BankPlayer]) {
         if (isPlayerHandWinner(banksHand, playerAndHand._2._1.asInstanceOf[HandHumanPlayer])) {
           winners = playerAndHand._1 :: winners
@@ -77,21 +111,21 @@ class Round(game: Game) {
   private def deal: Unit = {
     createPlayersHands
     for (x <- 0 to 1) {
-      for (playerAndHand <- playersAndHands) {
-        playerAndHand._2._1.addCardToHand(game.getNextCardFromDeck)
+      for (playerAndHandAndBet <- playersAndHandsAndBets) {
+        playerAndHandAndBet._2._1.addCardToHand(game.getNextCardFromDeck)
       }
     }
   }
 
   private def createPlayersHands: Unit = {
-    playersAndHands = mutable.LinkedHashMap()
+    playersAndHandsAndBets = mutable.LinkedHashMap()
     for (player <- game.players) {
       var hand: Hand = null
       player match {
         case a: BankPlayer => hand = new HandBank
         case b: HumanPlayer => hand = new HandHumanPlayer
       }
-      playersAndHands += (player ->(hand, new Bet(0)))
+      playersAndHandsAndBets += (player ->(hand, new Bet(0)))
     }
   }
 

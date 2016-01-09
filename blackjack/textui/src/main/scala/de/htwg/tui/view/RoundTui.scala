@@ -1,6 +1,6 @@
 package de.htwg.tui.view
 
-import de.htwg.core.entities.{Player, Round, BankPlayer}
+import de.htwg.core.entities.{HumanPlayer, Player, Round, BankPlayer}
 
 import scala.io.StdIn
 
@@ -20,10 +20,14 @@ object RoundTui extends Tui {
     }
   }
 
-  def printAllCardsOfPlayers(round: Round): Unit = {
-    println("Cards:")
+  def printAllCardsAndBetsOfPlayers(round: Round): Unit = {
+    println("Name | Cards | Bet")
     for (player <- round.getPlayers) {
-      println(player.name + " " + round.getHandOfPlayer(player).getAllCards)
+      print(player.name + " | " + round.getHandOfPlayer(player).getAllCards)
+      if (player.isInstanceOf[HumanPlayer]) {
+        print(" | " + round.getBetOfPlayer(player.asInstanceOf[HumanPlayer]).getAmount())
+      }
+      println()
     }
   }
 
@@ -79,7 +83,8 @@ object RoundTui extends Tui {
         }
       }
     }
-    printAllCardsOfPlayers(round)
+    round.finish()
+    printAllCardsAndBetsOfPlayers(round)
     printWinners(round)
   }
 }

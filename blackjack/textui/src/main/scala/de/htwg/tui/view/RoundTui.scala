@@ -54,9 +54,15 @@ object RoundTui extends Tui {
   }
 
   def start(round: Round): Unit = {
-    print("New Round started\n")
+    println("New Round started")
 
     /**
+      * Das Blackjack-Spiel beginnt mit dem Einsatz der Spieler.
+      */
+    BetTui.start(round)
+
+    /**
+      * Dann beginnt das Blackjack-Spiel mit dem Austeilen der Karten.
       * Dealer fragt jeden Spieler von links nach rechts, wie sie fortfahren möchten. Abhängig von ihren Karten können
       * Spieler entweder eine weitere Karte fordern (hit) oder sie können weitere Karten ablehnen (stand).  Spieler
       * können so viele weitere Karten fordern, wie sie möchten, aber sobald sie die 21 überschreiten, ist die Hand

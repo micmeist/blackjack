@@ -8,7 +8,7 @@ import scala.collection.mutable
 class Round(game: Game) {
 
   //TODO: use immutable List
-  private[entities] var playersAndHands: mutable.LinkedHashMap[Player, Hand] = null
+  private[entities] var playersAndHands: mutable.LinkedHashMap[Player, Tuple2[Hand, Bet]] = null
   deal
 
   //TODO: Some Players may be not in round
@@ -17,13 +17,23 @@ class Round(game: Game) {
   }
 
   def getHandOfPlayer(player: Player): Hand = {
-    val handOption: Option[Hand] = playersAndHands.get(player)
-    handOption.get
+    val option: Option[Tuple2[Hand, Bet]] = playersAndHands.get(player)
+    option.get._1
   }
 
   def getHandOfBank(): HandBank = {
-    val handOption: Option[Hand] = playersAndHands.get(getPlayers.last)
-    handOption.get.asInstanceOf[HandBank]
+    val option: Option[Tuple2[Hand, Bet]] = playersAndHands.get(getPlayers.last)
+    option.get._1.asInstanceOf[HandBank]
+  }
+
+  def getBetOfPlayer(player: HumanPlayer): Bet = {
+    val option: Option[Tuple2[Hand, Bet]] = playersAndHands.get(player)
+    option.get._2
+  }
+
+  def bet(player: HumanPlayer, amount: Double): Unit = {
+    playersAndHands.get(player).get._2 + amount
+    player - amount
   }
 
   /**
@@ -32,16 +42,16 @@ class Round(game: Game) {
     * @param player the player who gets another card to his hand
     */
   def hit(player: Player): Unit = {
-    val handOption: Option[Hand] = playersAndHands.get(player)
-    handOption.get.addCardToHand(game.getNextCardFromDeck)
+    val handOption: Option[Tuple2[Hand, Bet]] = playersAndHands.get(player)
+    handOption.get._1.addCardToHand(game.getNextCardFromDeck)
   }
 
   def getWinners: List[Player] = {
-    val banksHand: HandBank = playersAndHands.last._2.asInstanceOf[HandBank]
+    val banksHand: HandBank = playersAndHands.last._2._1.asInstanceOf[HandBank]
     var winners: List[Player] = List()
     playersAndHands.foreach(playerAndHand =>
       if (!playerAndHand._1.isInstanceOf[BankPlayer]) {
-        if (isPlayerHandWinner(banksHand, playerAndHand._2.asInstanceOf[HandHumanPlayer])) {
+        if (isPlayerHandWinner(banksHand, playerAndHand._2._1.asInstanceOf[HandHumanPlayer])) {
           winners = playerAndHand._1 :: winners
         }
       }
@@ -68,7 +78,7 @@ class Round(game: Game) {
     createPlayersHands
     for (x <- 0 to 1) {
       for (playerAndHand <- playersAndHands) {
-        playerAndHand._2.addCardToHand(game.getNextCardFromDeck)
+        playerAndHand._2._1.addCardToHand(game.getNextCardFromDeck)
       }
     }
   }
@@ -81,7 +91,7 @@ class Round(game: Game) {
         case a: BankPlayer => hand = new HandBank
         case b: HumanPlayer => hand = new HandHumanPlayer
       }
-      playersAndHands += (player -> hand)
+      playersAndHands += (player ->(hand, new Bet(0)))
     }
   }
 

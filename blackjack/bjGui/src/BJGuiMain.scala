@@ -62,14 +62,11 @@ object BJGuiMain extends SimpleSwingApplication {
       text = "Start the game!"
     }
     val lblStake = new Label {
-      text = "Stake: "
+      text = "Stake in $: "
     }
     val txtStake = txtField
     val bnNewRound = new Button {
       text = "New Round!"
-    }
-    val bnExit = new Button {
-      text = "Exit"
     }
     
     def txtField = new TextField {
@@ -121,10 +118,6 @@ object BJGuiMain extends SimpleSwingApplication {
       c.gridx = 0
       c.gridy = 2
       layout(bnNewRound) = c
-      
-      c.gridx = 0
-      c.gridy = 3
-      layout(bnExit) = c
     }
     
     //beim Start jeder neuen Runde
@@ -138,7 +131,7 @@ object BJGuiMain extends SimpleSwingApplication {
       icon = new ImageIcon("heart_3.png")
     }
     val flowPanelN = new FlowPanel()
-    val flowPanelS = new FlowPanel(labelPic1, labelPic2)
+    val flowPanelS = new FlowPanel(labelPic1, labelPic2) 
   
     contents = new BorderPanel {
       layout(gridBagPanelW) = West
@@ -153,6 +146,7 @@ object BJGuiMain extends SimpleSwingApplication {
     listenTo(bnStand)
     listenTo(bnStart)
     listenTo(txtStake.keys)
+    listenTo(bnNewRound)
     
     
     reactions += {
@@ -173,15 +167,17 @@ object BJGuiMain extends SimpleSwingApplication {
         bnStart.enabled = false
         bnGiveCard.enabled = true
         bnStand.enabled = true
-        // erreicht diesen bn auch nicht
       case ButtonClicked(component) if component == bnNewRound =>  
         startNewRound
-        // ERREICHT exit button nicht ?!
-      case ButtonClicked(component) if component == bnExit =>  
-        top.dispose()
       case KeyPressed(_, Key.Enter, _, _) =>
+        //def isAllDigits(x: String) = x forall Character.isDigit
+        if(!(txtStake.text.forall { _.isDigit })) {
+          Dialog.showMessage(new FlowPanel, "Please use numbers only!")
+          txtStake.text = ""
+        } else {
         txtStake.enabled = false
-        bnStart.enabled = true      
+        bnStart.enabled = true 
+        }
     }
     
     

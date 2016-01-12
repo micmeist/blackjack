@@ -3,8 +3,8 @@
 
 @main("Game") {
 
-    @game
+    @players("Players in game", game.players)
 
-    <a class="button" href="@routes.Application.startNewRound()">Start new Round</a>
+    <a class="btn btn-default" href="@routes.Application.startNewRound()">Start new Round</a>
 
 }

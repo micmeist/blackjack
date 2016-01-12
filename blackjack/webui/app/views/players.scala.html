@@ -1,0 +1,16 @@
+@import de.htwg.core.entities.Player
+@(panelTitle : String, players : List[Player])
+
+<div class="panel panel-default">
+        <!-- Default panel contents -->
+    <div class="panel-heading">@panelTitle</div>
+
+        <!-- Table -->
+    <table class="table table-striped">
+        <tr><th>Name</th><th>Money</th></tr>
+        @for(player <- players){
+            <tr><td>@player.name</td><td>@player.getMoney</td></tr>
+        }
+
+    </table>
+</div>

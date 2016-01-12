@@ -38,8 +38,8 @@ class Round(game: Game) {
   }
 
   //TODO: Test für Fall, dass amount höher als verfügbares Geld
-  def bet(player: HumanPlayer, amount: Double): Unit = {
-    var possibleAmount: Double = 0
+  def bet(player: HumanPlayer, amount: Int): Unit = {
+    var possibleAmount: Int = 0
     if (amount > player.getMoney) {
       possibleAmount = player.getMoney
     } else {

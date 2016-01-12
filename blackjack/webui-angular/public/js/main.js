@@ -23,13 +23,14 @@ require(['angular', './controllers', './directives', './filters', './services', 
 
     // Declare app level module which depends on filters, and services
 
-    angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives', 'ngRoute']).
+    angular.module('blackjack', ['blackjack.filters', 'blackjack.services', 'blackjack.directives', 'ngRoute']).
       config(['$routeProvider', function($routeProvider) {
-        $routeProvider.when('/game', {templateUrl: 'partials/game.html', controller: controllers.MyCtrl1});
-        $routeProvider.when('/view2', {templateUrl: 'partials/partial2.html', controller: controllers.MyCtrl2});
-        $routeProvider.otherwise({redirectTo: '/view1'});
+        $routeProvider.when('/home', {templateUrl: 'partials/home.html', controller: controllers.HomeController});
+        $routeProvider.when('/game', {templateUrl: 'partials/game.html', controller: controllers.GameController});
+        $routeProvider.when('/round', {templateUrl: 'partials/round.html', controller: controllers.RoundController});
+        $routeProvider.otherwise({redirectTo: '/home'});
       }]);
 
-    angular.bootstrap(document, ['myApp']);
+    angular.bootstrap(document, ['blackjack']);
 
 });

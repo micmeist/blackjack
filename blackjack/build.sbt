@@ -12,10 +12,12 @@ lazy val root = (project in file(".")).
   settings(
     name := "blackjack"
   ).
-  aggregate(textui, webui, core)
+  aggregate(textui, webui, webuiangular, core)
 
 
 lazy val core = project.settings(commonSettings: _*)
+
+lazy val webuiangular = project.settings(commonSettings: _*).dependsOn(core)
 
 lazy val webui = project.settings(commonSettings: _*).dependsOn(core)
 

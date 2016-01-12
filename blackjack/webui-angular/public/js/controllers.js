@@ -2,18 +2,24 @@
 
 'use strict';
 
-define(function() {
+define(function () {
 
-/* Controllers */
+    /* Controllers */
 
-var controllers = {};
+    var controllers = {};
 
-controllers.MyCtrl1 = function() {}
-controllers.MyCtrl1.$inject = [];
+    controllers.HomeController = function () {
+    }
+    controllers.HomeController.$inject = [];
 
-controllers.MyCtrl2 = function() {}
-controllers.MyCtrl2.$inject = [];
+    controllers.GameController = function () {
+    }
+    controllers.GameController.$inject = [];
 
-return controllers;
+    controllers.RoundController = function () {
+    }
+    controllers.RoundController.$inject = [];
+
+    return controllers;
 
 });

@@ -8,23 +8,27 @@ define(function () {
 
     var controllers = {};
 
-    controllers.HomeController = function ($scope, $location) {
-        $scope.newGame = function(){
+    controllers.HomeController = function ($scope, $location, gameService) {
+        $scope.newGame = function () {
+            gameService.newGame()
             $location.path("/game");
         }
     }
-    controllers.HomeController.$inject = ["$scope", "$location"];
+    controllers.HomeController.$inject = ["$scope", "$location", "gameService"];
 
-    controllers.GameController = function ($scope, $http) {
-        $http.get("newgame").then(function (response) {
-            $scope.game = response.data;
-        });
+    controllers.GameController = function ($scope, $location, gameService) {
+        $scope.game = gameService.getGame();
+        $scope.newRound = function () {
+            gameService.newRound()
+            $location.path("/round");
+        }
     }
-    controllers.GameController.$inject = ["$scope", "$http"];
+    controllers.GameController.$inject = ["$scope", "$location", "gameService"];
 
-    controllers.RoundController = function () {
+    controllers.RoundController = function ($scope, gameService) {
+        $scope.round = gameService.getRound()
     }
-    controllers.RoundController.$inject = [];
+    controllers.RoundController.$inject = ["$scope", "gameService"];
 
     return controllers;
 

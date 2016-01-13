@@ -15,4 +15,9 @@ object Application extends Controller {
     Ok(Json.stringify(Json.toJson(game)))
   }
 
+  def newRound = Action {
+    //TODO: implement
+    Ok("new round not implemented yet")
+  }
+
 }

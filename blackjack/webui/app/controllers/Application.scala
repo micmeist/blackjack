@@ -1,6 +1,7 @@
 package controllers
 
 import de.htwg.core.GameCoreController
+import play.api.libs.json.Json
 import play.api.mvc._
 
 object Application extends Controller {
@@ -11,7 +12,7 @@ object Application extends Controller {
 
   def newGame = Action {
     val game = GameCoreController.startNewGame
-    Ok(game.toString)
+    Ok(Json.stringify(Json.toJson(game)))
   }
 
 }

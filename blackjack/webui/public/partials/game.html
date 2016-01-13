@@ -3,13 +3,11 @@
     <div class="panel-heading">All Players in Game</div>
 
     <!-- Table -->
-    <table class="table table-striped" ng-controller="GameController">
+    <table class="table table-striped">
         <tr><th>Name</th><th>Money</th></tr>
 
-        <tr ng-repeat="player in players">
+        <tr ng-repeat="player in game.players">
             <td>{{player.name}}</td>
             <td>{{player.money}}</td></tr>
-
-
     </table>
 </div>

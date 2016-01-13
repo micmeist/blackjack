@@ -10,13 +10,15 @@ define(function () {
 
     controllers.HomeController = function ($scope, $location) {
         $scope.newGame = function(){
-            $location.path("/game")
+            $location.path("/game");
         }
     }
     controllers.HomeController.$inject = ["$scope", "$location"];
 
     controllers.GameController = function ($scope, $http) {
-        $http.get("newgame")
+        $http.get("newgame").then(function (response) {
+            $scope.game = response.data;
+        });
     }
     controllers.GameController.$inject = ["$scope", "$http"];
 

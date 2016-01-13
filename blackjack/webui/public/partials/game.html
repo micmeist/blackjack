@@ -1,0 +1,15 @@
+<div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">All Players in Game</div>
+
+    <!-- Table -->
+    <table class="table table-striped" ng-controller="GameController">
+        <tr><th>Name</th><th>Money</th></tr>
+
+        <tr ng-repeat="player in players">
+            <td>{{player.name}}</td>
+            <td>{{player.money}}</td></tr>
+
+
+    </table>
+</div>

@@ -8,13 +8,17 @@ define(function () {
 
     var controllers = {};
 
-    controllers.HomeController = function () {
+    controllers.HomeController = function ($scope, $location) {
+        $scope.newGame = function(){
+            $location.path("/game")
+        }
     }
-    controllers.HomeController.$inject = [];
+    controllers.HomeController.$inject = ["$scope", "$location"];
 
-    controllers.GameController = function () {
+    controllers.GameController = function ($scope, $http) {
+        $http.get("newgame")
     }
-    controllers.GameController.$inject = [];
+    controllers.GameController.$inject = ["$scope", "$http"];
 
     controllers.RoundController = function () {
     }

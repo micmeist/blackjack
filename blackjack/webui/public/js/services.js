@@ -15,6 +15,7 @@ define(['angular'], function (angular) {
         var round;
         return {
             newGame: function () {
+                game = null;
                 $http.get("game/new").then(function (response) {
                     game = response.data;
                 });

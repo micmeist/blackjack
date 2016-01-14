@@ -1,16 +1,17 @@
 package de.htwg.core.entities
 
-import scala.collection.mutable
+import play.api.libs.json.{Json, Writes}
+import scala.collection.mutable.LinkedHashMap
 
 /**
   * Created by Michael Meister on 19.12.2015.
   */
-class Round(game: Game) {
+class Round(private val game: Game) {
 
   private var finished: Boolean = false
 
   //TODO: use immutable List
-  private[entities] var playersAndHandsAndBets: mutable.LinkedHashMap[Player, Tuple2[Hand, Bet]] = null
+  private[entities] var playersAndHandsAndBets: LinkedHashMap[Player, Tuple2[Hand, Bet]] = null
   deal
 
   //TODO: Some Players may be not in round
@@ -74,6 +75,7 @@ class Round(game: Game) {
           getBank() + cash
         }
       }
+      finished = true
     }
   }
 
@@ -118,7 +120,7 @@ class Round(game: Game) {
   }
 
   private def createPlayersHands: Unit = {
-    playersAndHandsAndBets = mutable.LinkedHashMap()
+    playersAndHandsAndBets = LinkedHashMap()
     for (player <- game.players) {
       var hand: Hand = null
       player match {
@@ -127,6 +129,23 @@ class Round(game: Game) {
       }
       playersAndHandsAndBets += (player ->(hand, new Bet(0)))
     }
+  }
+
+}
+
+object Round {
+
+  implicit def tuple2Writes[Hand, Bet](implicit handWrites : Writes[Hand], betWrites : Writes[Bet]) : Writes[Tuple2[Hand, Bet]] = new Writes[Tuple2[Hand, Bet]] {
+    def writes(tuple: Tuple2[Hand, Bet]) = Json.obj(
+      "hand" -> tuple._1,
+      "bet" -> tuple._2
+    )
+  }
+  implicit val roundWrites = new Writes[Round] {
+    def writes(round: Round) = Json.obj(
+      "game" -> round.game,
+      "playersAndHandsAndBets" -> Json.toJson(round.playersAndHandsAndBets.toMap[Player, Tuple2[Hand, Bet]])
+    )
   }
 
 }

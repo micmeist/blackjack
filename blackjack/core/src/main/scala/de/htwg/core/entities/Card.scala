@@ -17,4 +17,6 @@ case class Card(color: String, number: String, weight: Int) {
 
 object Card {
   implicit val cardWrites = Json.writes[Card]
+  
+  implicit val cardReads = Json.reads[Card]
 }

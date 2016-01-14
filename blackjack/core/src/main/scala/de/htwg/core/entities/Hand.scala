@@ -1,5 +1,7 @@
 package de.htwg.core.entities
 
+import play.api.libs.json.{Json, Writes}
+
 /**
   * Created by Michael Meister on 20.12.2015.
   */
@@ -62,4 +64,14 @@ class HandHumanPlayer extends Hand {
     getAllCards
   }
 
+}
+
+object Hand {
+  implicit val handWrites = new Writes[Hand] {
+    def writes(hand: Hand) = Json.obj(
+      "visibleCards" -> hand.getVisibleCards(),
+      "isBust" -> hand.isBust,
+      "sum" -> hand.getSum
+    )
+  }
 }

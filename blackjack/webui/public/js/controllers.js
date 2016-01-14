@@ -17,7 +17,7 @@ define(function () {
     controllers.HomeController.$inject = ["$scope", "$location", "gameService"];
 
     controllers.GameController = function ($scope, $location, gameService) {
-        $scope.game = gameService.getGame();
+        $scope.service = gameService;
         $scope.newRound = function () {
             gameService.newRound()
             $location.path("/round");
@@ -26,7 +26,7 @@ define(function () {
     controllers.GameController.$inject = ["$scope", "$location", "gameService"];
 
     controllers.RoundController = function ($scope, gameService) {
-        $scope.round = gameService.getRound()
+        $scope.service = gameService
     }
     controllers.RoundController.$inject = ["$scope", "gameService"];
 

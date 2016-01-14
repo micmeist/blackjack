@@ -3,9 +3,9 @@
 # ~~~~
 
 # Home page
-GET        /                 controllers.Application.index
-GET        /game/new         controllers.Application.newGame
-GET        /round/new        controllers.Application.newRound
+GET         /                 controllers.Application.index
+GET         /game/new         controllers.Application.newGame
+POST        /round/new        controllers.Application.newRound
 
 # Map static resources from the /public folder to the /assets URL path
-GET        /*file            controllers.Assets.versioned(path="/public", file: Asset)
+GET         /*file            controllers.Assets.versioned(path="/public", file: Asset)

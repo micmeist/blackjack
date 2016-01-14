@@ -13,6 +13,7 @@ define(['angular'], function (angular) {
     factory("gameService", function ($http) {
         var game;
         var round;
+        var message = null;
         return {
             newGame: function () {
                 game = null;
@@ -20,16 +21,26 @@ define(['angular'], function (angular) {
                     game = response.data;
                 });
             },
-            getGame: function (){
+            getGame: function () {
                 return game;
             },
-            newRound : function (){
-                $http.get("round/new").then(function (response) {
+            newRound: function () {
+                $http({
+                    method: "POST",
+                    url: "round/new",
+                    data: game
+                }).then(function (response) {
                     round = response.data;
+                }, function (response) {
+                    //TODO: Error handling
+                    message = response.statusText
                 });
             },
-            getRound : function (){
+            getRound: function () {
                 return round;
+            },
+            getMessage : function (){
+                return message;
             }
         }
     });

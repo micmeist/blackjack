@@ -1,7 +1,7 @@
 package controllers
 
 import de.htwg.core.GameCoreController
-import de.htwg.core.entities.Game
+import de.htwg.core.entities.{Round, Game}
 import play.api.libs.json.{JsError, Json}
 import play.api.mvc._
 
@@ -18,7 +18,18 @@ object Application extends Controller {
 
   def newRound = Action(parse.json) { request =>
     request.body.validate[Game].map {
-      case (game) => Ok("Alles gut")
+      case (game : Game) =>
+          Ok(Json.stringify(Json.toJson(GameCoreController.startNewRound(game))))
+    }.recoverTotal {
+      e => BadRequest("Detected error:" + JsError.toFlatForm(e))
+    }
+
+  }
+
+  def getPlayers = Action(parse.json) {request =>
+    request.body.validate[Round].map {
+      case (round : Round) =>
+        Ok(Json.stringify(Json.toJson(round.getPlayers)))
     }.recoverTotal {
       e => BadRequest("Detected error:" + JsError.toFlatForm(e))
     }

@@ -1,7 +1,10 @@
 package de.htwg.core.entities
 
-import play.api.libs.json.{Json, Writes}
-import scala.collection.mutable.LinkedHashMap
+import play.api.data.validation.ValidationError
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
+
+import scala.collection.immutable.Map
 
 /**
   * Created by Michael Meister on 19.12.2015.
@@ -11,7 +14,7 @@ class Round(private val game: Game) {
   private var finished: Boolean = false
 
   //TODO: use immutable List
-  private[entities] var playersAndHandsAndBets: LinkedHashMap[Player, Tuple2[Hand, Bet]] = null
+  private[entities] var playersAndHandsAndBets: Map[Player, Tuple2[Hand, Bet]] = null
   deal
 
   //TODO: Some Players may be not in round
@@ -83,7 +86,7 @@ class Round(private val game: Game) {
     * @return the list of players who have an higher hand than the bank
     */
   def getWinners: List[Player] = {
-    val banksHand: HandBank = playersAndHandsAndBets.last._2._1.asInstanceOf[HandBank]
+    val banksHand: HandBank = playersAndHandsAndBets.get(getPlayers.last).get._1.asInstanceOf[HandBank]
     var winners: List[Player] = List()
     playersAndHandsAndBets.foreach(playerAndHand =>
       if (!playerAndHand._1.isInstanceOf[BankPlayer]) {
@@ -113,14 +116,15 @@ class Round(private val game: Game) {
   private def deal: Unit = {
     createPlayersHands
     for (x <- 0 to 1) {
-      for (playerAndHandAndBet <- playersAndHandsAndBets) {
-        playerAndHandAndBet._2._1.addCardToHand(game.getNextCardFromDeck)
+      for (player <- getPlayers) {
+        val handAndBet: Tuple2[Hand, Bet] = playersAndHandsAndBets.get(player).get
+        handAndBet._1.addCardToHand(game.getNextCardFromDeck)
       }
     }
   }
 
   private def createPlayersHands: Unit = {
-    playersAndHandsAndBets = LinkedHashMap()
+    playersAndHandsAndBets = Map()
     for (player <- game.players) {
       var hand: Hand = null
       player match {
@@ -135,17 +139,51 @@ class Round(private val game: Game) {
 
 object Round {
 
-  implicit def tuple2Writes[Hand, Bet](implicit handWrites : Writes[Hand], betWrites : Writes[Bet]) : Writes[Tuple2[Hand, Bet]] = new Writes[Tuple2[Hand, Bet]] {
+  implicit def tuple2Writes[Hand, Bet](implicit handWrites: Writes[Hand], betWrites: Writes[Bet]): Writes[Tuple2[Hand, Bet]] = new Writes[Tuple2[Hand, Bet]] {
     def writes(tuple: Tuple2[Hand, Bet]) = Json.obj(
       "hand" -> tuple._1,
       "bet" -> tuple._2
     )
   }
+
+  implicit def tuple2Reads[Hand, Bet](implicit aReads: Reads[Hand], bReads: Reads[Bet]): Reads[Tuple2[Hand, Bet]] = new Reads[Tuple2[Hand, Bet]] {
+    def reads(json: JsValue) = {
+      json match {
+        case JsArray(arr) if arr.size == 2 => for {
+          a <- aReads.reads(arr(0))
+          b <- bReads.reads(arr(1))
+        } yield (a, b)
+        case _ => JsError(Seq(JsPath() -> Seq(ValidationError("Expected array of three elements"))))
+      }
+    }
+  }
+
   implicit val roundWrites = new Writes[Round] {
     def writes(round: Round) = Json.obj(
       "game" -> round.game,
-      "playersAndHandsAndBets" -> Json.toJson(round.playersAndHandsAndBets.toMap[Player, Tuple2[Hand, Bet]])
+      "playersAndHandsAndBets" -> Json.toJson(round.playersAndHandsAndBets)
     )
   }
+
+  implicit val roundReads: Reads[Round] = (
+    (JsPath \ "game").read[Game] and
+      (JsPath \ "playersAndHandsAndBets").read[Map[Player, Tuple2[Hand, Bet]]]
+    ) (Round.apply _)
+
+  def apply(game: Game, playersAndHandsAndBets: Map[Player, Tuple2[Hand, Bet]]): Round = {
+    val round = new Round(game)
+    round.playersAndHandsAndBets = playersAndHandsAndBets
+    round
+  }
+
+  implicit def readMap[Player, Tuple2[Hand, Bet]](implicit playerReads: Reads[Player], tuple2Reads: Reads[Tuple2[Hand, Bet]]): Reads[scala.collection.immutable.Map[Player, Tuple2[Hand, Bet]]] =
+    new Reads[Map[Player, Tuple2[Hand, Bet]]] {
+      def reads(json: JsValue) = {
+        json.validate[Map[String, String]].map(_.map {
+          case (key, value) => playerReads.reads(Json.parse(key)).get -> tuple2Reads.reads(Json.parse(value)).get
+        })
+      }
+    }
+
 
 }

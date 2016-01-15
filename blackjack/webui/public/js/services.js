@@ -36,8 +36,18 @@ define(['angular'], function (angular) {
                     message = response.statusText
                 });
             },
-            getRound: function () {
-                return round;
+            getPlayers: function (){
+                $http({
+                    method: "POST",
+                    url: "round/players",
+                    data: round
+                }).then(function (response) {
+                    return response.data;
+                }, function (response) {
+                    //TODO: Error handling
+                    message = response.statusText
+                    return false
+                });
             },
             getMessage : function (){
                 return message;

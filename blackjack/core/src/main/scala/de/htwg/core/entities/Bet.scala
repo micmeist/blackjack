@@ -1,11 +1,11 @@
 package de.htwg.core.entities
 
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.Json
 
 /**
   * Created by Michael Meister on 09.01.2016.
   */
-class Bet(private var amount: Int) {
+case class Bet(private var amount: Int) {
 
   def +(amount: Int): Unit = {
     this.amount += amount
@@ -17,9 +17,7 @@ class Bet(private var amount: Int) {
 }
 
 object Bet {
-  implicit val betWrites = new Writes[Bet] {
-    def writes(bet: Bet) = Json.obj(
-      "amount" -> bet.getAmount()
-    )
-  }
+  implicit val cardWrites = Json.writes[Bet]
+
+  implicit val cardReads = Json.reads[Bet]
 }

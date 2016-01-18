@@ -12,7 +12,6 @@ object BJGuiMain extends SimpleSwingApplication {
     title = "Blackjack"
     
     // alle Kartenbilder als Labelicons
-    // atm nur Spade
     val spade_2  = new Label {
       icon = new ImageIcon("spade_2.png")
     }
@@ -51,7 +50,126 @@ object BJGuiMain extends SimpleSwingApplication {
     }
     val spade_queen  = new Label {
       icon = new ImageIcon("spade_queen.png")
-    }    
+    }
+    val clubs_2  = new Label {
+      icon = new ImageIcon("clubs_2.png")
+    }
+    val clubs_3  = new Label {
+      icon = new ImageIcon("clubs_3.png")
+    }
+    val clubs_4  = new Label {
+      icon = new ImageIcon("clubs_4.png")
+    }
+    val clubs_5  = new Label {
+      icon = new ImageIcon("clubs_5.png")
+    }
+    val clubs_6  = new Label {
+      icon = new ImageIcon("clubs_6.png")
+    }
+    val clubs_7  = new Label {
+      icon = new ImageIcon("clubs_7.png")
+    }
+    val clubs_8  = new Label {
+      icon = new ImageIcon("clubs_8.png")
+    }
+    val clubs_9  = new Label {
+      icon = new ImageIcon("clubs_9.png")
+    }
+    val clubs_10  = new Label {
+      icon = new ImageIcon("clubs_10.png")
+    }
+    val clubs_ace  = new Label {
+      icon = new ImageIcon("clubs_ace.png")
+    }
+    val clubs_jack  = new Label {
+      icon = new ImageIcon("clubs_jack.png")
+    }
+    val clubs_king  = new Label {
+      icon = new ImageIcon("clubs_king.png")
+    }
+    val clubs_queen  = new Label {
+      icon = new ImageIcon("clubs_queen.png")
+    }
+    val heart_2  = new Label {
+      icon = new ImageIcon("heart_2.png")
+    }
+    val heart_3  = new Label {
+      icon = new ImageIcon("heart_3.png")
+    }
+    val heart_4  = new Label {
+      icon = new ImageIcon("heart_4.png")
+    }
+    val heart_5  = new Label {
+      icon = new ImageIcon("heart_5.png")
+    }
+    val heart_6  = new Label {
+      icon = new ImageIcon("heart_6.png")
+    }
+    val heart_7  = new Label {
+      icon = new ImageIcon("heart_7.png")
+    }
+    val heart_8  = new Label {
+      icon = new ImageIcon("heart_8.png")
+    }
+    val heart_9  = new Label {
+      icon = new ImageIcon("heart_9.png")
+    }
+    val heart_10  = new Label {
+      icon = new ImageIcon("heart_10.png")
+    }
+    val heart_ace  = new Label {
+      icon = new ImageIcon("heart_ace.png")
+    }
+    val heart_jack  = new Label {
+      icon = new ImageIcon("heart_jack.png")
+    }
+    val heart_king  = new Label {
+      icon = new ImageIcon("heart_king.png")
+    }
+    val heart_queen  = new Label {
+      icon = new ImageIcon("heart_queen.png")
+    }
+    val diamond_2  = new Label {
+      icon = new ImageIcon("diamond_2.png")
+    }
+    val diamond_3  = new Label {
+      icon = new ImageIcon("diamond_3.png")
+    }
+    val diamond_4  = new Label {
+      icon = new ImageIcon("diamond_4.png")
+    }
+    val diamond_5  = new Label {
+      icon = new ImageIcon("diamond_5.png")
+    }
+    val diamond_6  = new Label {
+      icon = new ImageIcon("diamond_6.png")
+    }
+    val diamond_7  = new Label {
+      icon = new ImageIcon("diamond_7.png")
+    }
+    val diamond_8  = new Label {
+      icon = new ImageIcon("diamond_8.png")
+    }
+    val diamond_9  = new Label {
+      icon = new ImageIcon("diamond_9.png")
+    }
+    val diamond_10  = new Label {
+      icon = new ImageIcon("diamond_10.png")
+    }
+    val diamond_ace  = new Label {
+      icon = new ImageIcon("diamond_ace.png")
+    }
+    val diamond_jack  = new Label {
+      icon = new ImageIcon("diamond_jack.png")
+    }
+    val diamond_king  = new Label {
+      icon = new ImageIcon("diamond_king.png")
+    }
+    val diamond_queen  = new Label {
+      icon = new ImageIcon("diamond_queen.png")
+    }
+    
+    // Referenzen zu restlichen GUI Komponenten
     val bnGiveCard = new Button {
       text = "Hit me!"
     }
@@ -69,10 +187,21 @@ object BJGuiMain extends SimpleSwingApplication {
       text = "New Round!"
     }
     
+    // Methode um Referenz auf ein EditText zu bekommen
     def txtField = new TextField {
       horizontalAlignment = Alignment.Left
     }
     
+    // setze primäres Layout
+    contents = new BorderPanel {
+      layout(gridBagPanelW) = West
+      layout(lblCenterDefault) = Center
+      layout(flowPanelN) = North
+      layout(flowPanelS) = South
+      layout(gridBagPanelE) = East
+    }
+    
+    // fülle untergeordnete Layouts
     val gridBagPanelE = new GridBagPanel {
       val c = new Constraints
       
@@ -133,22 +262,14 @@ object BJGuiMain extends SimpleSwingApplication {
     val flowPanelN = new FlowPanel()
     val flowPanelS = new FlowPanel(labelPic1, labelPic2) 
   
-    contents = new BorderPanel {
-      layout(gridBagPanelW) = West
-      layout(lblCenterDefault) = Center
-      layout(flowPanelN) = North
-      layout(flowPanelS) = South
-      layout(gridBagPanelE) = East
-    }
-    
-    
+    // setze Listener
     listenTo(bnGiveCard)
     listenTo(bnStand)
     listenTo(bnStart)
     listenTo(txtStake.keys)
     listenTo(bnNewRound)
     
-    
+    // setze reactions 
     reactions += {
       case ButtonClicked(component) if component == bnGiveCard =>
         // fordere neue Karte von Kontroller an "newCard"

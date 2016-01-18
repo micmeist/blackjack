@@ -23,6 +23,16 @@ class Round(private val game: Game) {
     game.players
   }
 
+  def getRoundPlayers: List[RoundPlayer] = {
+    var result: List[RoundPlayer] = List()
+    for (player <- getPlayers) {
+      //TODO: use Option
+      val handAndBet = playersAndHandsAndBets.get(player).get
+      result = new RoundPlayer(player, handAndBet._1, handAndBet._2) :: result
+    }
+    result
+  }
+
   def getHandOfPlayer(player: Player): Hand = {
     val option: Option[HandAndBet] = playersAndHandsAndBets.get(player)
     option.get._1

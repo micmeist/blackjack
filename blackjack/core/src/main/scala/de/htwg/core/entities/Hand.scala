@@ -75,9 +75,9 @@ class HandHumanPlayer extends Hand {
 object Hand {
   implicit val handWrites = new Writes[Hand] {
     def writes(hand: Hand) = Json.obj(
-      "cards" -> hand.cards,
+      "cards" -> hand.getAllCards(),
+      "visibleCards" -> hand.getVisibleCards(),
       "isBust" -> hand.isBust,
-      "sum" -> hand.getSum,
       "isBank" -> hand.isBank()
     )
   }

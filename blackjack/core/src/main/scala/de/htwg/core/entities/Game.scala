@@ -10,12 +10,16 @@ import play.api.libs.functional.syntax._
 class Game() {
   private[entities] var deck: List[Card] = GameCardStackFactory.generateCards
   //TODO: Add as many human players as user wants
-  var players: List[Player] = List(new HumanPlayer, new BankPlayer)
+  private[entities] var players: List[Player] = List(new HumanPlayer, new BankPlayer)
 
   def getNextCardFromDeck: Card = {
     val card = deck.head
     deck = deck.filterNot(_.equals(card))
     card
+  }
+
+  def getPlayers: List[Player] = {
+    players
   }
 }
 

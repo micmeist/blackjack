@@ -6,7 +6,7 @@
     <table class="table table-striped">
         <tr><th>Name</th><th>Money</th></tr>
 
-        <tr ng-repeat="player in service.getGame().players">
+        <tr ng-repeat="player in gamePlayers">
             <td>{{player.name}}</td>
             <td>{{player.money}}</td></tr>
     </table>

@@ -19,10 +19,10 @@ define(['angular'], function (angular) {
                 game = null;
                 $http.get("game/new").then(function (response) {
                     game = response.data;
+                    message = null;
+                }, function(response){
+                    message = response.status + ": " +  response.statusText
                 });
-            },
-            getGame: function () {
-                return game;
             },
             newRound: function () {
                 $http({
@@ -31,26 +31,25 @@ define(['angular'], function (angular) {
                     data: game
                 }).then(function (response) {
                     round = response.data;
+                    message = null;
                 }, function (response) {
                     //TODO: Error handling
-                    message = response.statusText
+                    message = response.status + ": " +  response.statusText
                 });
             },
-            getPlayers: function (){
-                $http({
+            getGamePlayers: function (){
+                return $http({
+                    method: "POST",
+                    url: "game/players",
+                    data: game
+                });
+            },
+            getRoundPlayers: function (){
+                return $http({
                     method: "POST",
                     url: "round/players",
                     data: round
-                }).then(function (response) {
-                    return response.data;
-                }, function (response) {
-                    //TODO: Error handling
-                    message = response.statusText
-                    return false
                 });
-            },
-            getMessage : function (){
-                return message;
             }
         }
     });

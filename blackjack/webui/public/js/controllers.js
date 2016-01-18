@@ -10,24 +10,34 @@ define(function () {
 
     controllers.HomeController = function ($scope, $location, gameService) {
         $scope.newGame = function () {
-            gameService.newGame()
+            gameService.newGame();
             $location.path("/game");
         }
-    }
+    };
     controllers.HomeController.$inject = ["$scope", "$location", "gameService"];
 
     controllers.GameController = function ($scope, $location, gameService) {
-        $scope.service = gameService;
+        gameService.getGamePlayers().then(function(response){
+            $scope.gamePlayers = response.data
+        }, function(errorResponse){
+            $scope.errorMessage = errorResponse.statusText
+        });
         $scope.newRound = function () {
-            gameService.newRound()
+            gameService.newRound();
             $location.path("/round");
         }
-    }
+    };
     controllers.GameController.$inject = ["$scope", "$location", "gameService"];
 
     controllers.RoundController = function ($scope, gameService) {
-        $scope.players = gameService.getPlayers()
-    }
+        $scope.messages = new Array();
+        $scope.messages.push(gameService.message);
+        gameService.getRoundPlayers().then(function(response){
+            $scope.roundPlayers = response.data
+        }, function(errorResponse){
+            $scope.errorMessage = errorResponse.statusText
+        })
+    };
     controllers.RoundController.$inject = ["$scope", "gameService"];
 
     return controllers;

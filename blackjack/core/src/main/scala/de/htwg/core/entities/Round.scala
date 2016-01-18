@@ -4,6 +4,7 @@ import play.api.data.validation.ValidationError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
+
 import scala.collection.immutable.Map
 
 /**
@@ -146,14 +147,14 @@ object Round {
     )
   }
 
-  implicit def tuple2Reads[Hand, Bet](implicit aReads: Reads[Hand], bReads: Reads[Bet]): Reads[Tuple2[Hand, Bet]] = new Reads[Tuple2[Hand, Bet]] {
+  implicit def tuple2Reads[Player, HandAndBet](implicit aReads: Reads[Player], bReads: Reads[HandAndBet]): Reads[Tuple2[Player, HandAndBet]] = new Reads[Tuple2[Player, HandAndBet]] {
     def reads(json: JsValue) = {
       json match {
-        case JsArray(arr) if arr.size == 2 => for {
-          a <- aReads.reads(arr(0))
-          b <- bReads.reads(arr(1))
+        case JsObject(obj) => for {
+          a <- aReads.reads(obj.get("player").get)
+          b <- bReads.reads(obj.get("handAndBet").get)
         } yield (a, b)
-        case _ => JsError(Seq(JsPath() -> Seq(ValidationError("Expected array of three elements"))))
+        case _ => JsError(ValidationError("Expected array of two elements"))
       }
     }
   }
@@ -161,29 +162,23 @@ object Round {
   implicit val roundWrites = new Writes[Round] {
     def writes(round: Round) = Json.obj(
       "game" -> round.game,
-      "playersAndHandsAndBets" -> Json.toJson(round.playersAndHandsAndBets.toList)
+      "playersAndHandsAndBets" -> round.playersAndHandsAndBets.toList
     )
   }
 
   implicit val roundReads: Reads[Round] = (
     (JsPath \ "game").read[Game] and
-      (JsPath \ "playersAndHandsAndBets").read[Map[Player, HandAndBet]]
+      (JsPath \ "playersAndHandsAndBets").read[List[(Player, HandAndBet)]]
     ) (Round.apply _)
 
-  def apply(game: Game, playersAndHandsAndBets: Map[Player, HandAndBet]): Round = {
+  def apply(game: Game, playersAndHandsAndBets: List[(Player, HandAndBet)]): Round = {
     val round = new Round(game)
-    round.playersAndHandsAndBets = playersAndHandsAndBets
+    round.playersAndHandsAndBets = Map()
+    playersAndHandsAndBets.foreach(item =>
+      round.playersAndHandsAndBets += item._1 -> item._2
+    )
     round
   }
-
-  implicit def readMap[Player, HandAndBet](implicit playerReads: Reads[Player], handAndBetReads: Reads[HandAndBet]): Reads[scala.collection.immutable.Map[Player, HandAndBet]] =
-    new Reads[Map[Player, HandAndBet]] {
-      def reads(json: JsValue) = {
-        json.validate[Map[String, String]].map(_.map {
-          case (key, value) => playerReads.reads(Json.parse(key)).get -> handAndBetReads.reads(Json.parse(value)).get
-        })
-      }
-    }
 
 
 }

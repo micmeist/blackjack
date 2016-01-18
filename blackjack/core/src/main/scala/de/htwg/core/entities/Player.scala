@@ -39,7 +39,7 @@ case class HumanPlayer(override var money: Int = 1000) extends Player(name = "Hu
 case class BankPlayer(override var money: Int = 1000000) extends Player(name = "Bank")
 
 object Player {
-  implicit val playerWrites = new Writes[Player] {
+  implicit val playerWrites: Writes[Player] = new Writes[Player] {
     def writes(player: Player) = Json.obj(
       "name" -> player.name,
       "money" -> player.money

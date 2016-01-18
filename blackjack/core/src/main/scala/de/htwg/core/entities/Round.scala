@@ -14,7 +14,7 @@ class Round(private val game: Game) {
   private var finished: Boolean = false
 
   //TODO: use immutable List
-  private[entities] var playersAndHandsAndBets: Map[Player, Tuple2[Hand, Bet]] = null
+  private[entities] var playersAndHandsAndBets: Map[Player, HandAndBet] = null
   deal
 
   //TODO: Some Players may be not in round
@@ -23,12 +23,12 @@ class Round(private val game: Game) {
   }
 
   def getHandOfPlayer(player: Player): Hand = {
-    val option: Option[Tuple2[Hand, Bet]] = playersAndHandsAndBets.get(player)
+    val option: Option[HandAndBet] = playersAndHandsAndBets.get(player)
     option.get._1
   }
 
   def getHandOfBank(): HandBank = {
-    val option: Option[Tuple2[Hand, Bet]] = playersAndHandsAndBets.get(getBank)
+    val option: Option[HandAndBet] = playersAndHandsAndBets.get(getBank)
     option.get._1.asInstanceOf[HandBank]
   }
 
@@ -37,7 +37,7 @@ class Round(private val game: Game) {
   }
 
   def getBetOfPlayer(player: HumanPlayer): Bet = {
-    val option: Option[Tuple2[Hand, Bet]] = playersAndHandsAndBets.get(player)
+    val option: Option[HandAndBet] = playersAndHandsAndBets.get(player)
     option.get._2
   }
 
@@ -59,7 +59,7 @@ class Round(private val game: Game) {
     * @param player the player who gets another card to his hand
     */
   def hit(player: Player): Unit = {
-    val handOption: Option[Tuple2[Hand, Bet]] = playersAndHandsAndBets.get(player)
+    val handOption: Option[HandAndBet] = playersAndHandsAndBets.get(player)
     handOption.get._1.addCardToHand(game.getNextCardFromDeck)
   }
 
@@ -117,7 +117,7 @@ class Round(private val game: Game) {
     createPlayersHands
     for (x <- 0 to 1) {
       for (player <- getPlayers) {
-        val handAndBet: Tuple2[Hand, Bet] = playersAndHandsAndBets.get(player).get
+        val handAndBet: HandAndBet = playersAndHandsAndBets.get(player).get
         handAndBet._1.addCardToHand(game.getNextCardFromDeck)
       }
     }
@@ -131,7 +131,7 @@ class Round(private val game: Game) {
         case a: BankPlayer => hand = new HandBank
         case b: HumanPlayer => hand = new HandHumanPlayer
       }
-      playersAndHandsAndBets += (player ->(hand, new Bet(0)))
+      playersAndHandsAndBets += (player -> new HandAndBet(hand, new Bet(0)))
     }
   }
 
@@ -139,10 +139,10 @@ class Round(private val game: Game) {
 
 object Round {
 
-  implicit def tuple2Writes[Hand, Bet](implicit handWrites: Writes[Hand], betWrites: Writes[Bet]): Writes[Tuple2[Hand, Bet]] = new Writes[Tuple2[Hand, Bet]] {
-    def writes(tuple: Tuple2[Hand, Bet]) = Json.obj(
-      "hand" -> tuple._1,
-      "bet" -> tuple._2
+  implicit def tuple2Writes[Player, HandAndBet](implicit aWrites: Writes[Player], bWrites: Writes[HandAndBet]): Writes[Tuple2[Player, HandAndBet]] = new Writes[Tuple2[Player, HandAndBet]] {
+    def writes(tuple: Tuple2[Player, HandAndBet]) = Json.obj(
+      "player" -> tuple._1,
+      "handAndBet" -> tuple._2
     )
   }
 
@@ -161,26 +161,26 @@ object Round {
   implicit val roundWrites = new Writes[Round] {
     def writes(round: Round) = Json.obj(
       "game" -> round.game,
-      "playersAndHandsAndBets" -> Json.toJson(round.playersAndHandsAndBets)
+      "playersAndHandsAndBets" -> Json.toJson(round.playersAndHandsAndBets.toList)
     )
   }
 
   implicit val roundReads: Reads[Round] = (
     (JsPath \ "game").read[Game] and
-      (JsPath \ "playersAndHandsAndBets").read[Map[Player, Tuple2[Hand, Bet]]]
+      (JsPath \ "playersAndHandsAndBets").read[Map[Player, HandAndBet]]
     ) (Round.apply _)
 
-  def apply(game: Game, playersAndHandsAndBets: Map[Player, Tuple2[Hand, Bet]]): Round = {
+  def apply(game: Game, playersAndHandsAndBets: Map[Player, HandAndBet]): Round = {
     val round = new Round(game)
     round.playersAndHandsAndBets = playersAndHandsAndBets
     round
   }
 
-  implicit def readMap[Player, Tuple2[Hand, Bet]](implicit playerReads: Reads[Player], tuple2Reads: Reads[Tuple2[Hand, Bet]]): Reads[scala.collection.immutable.Map[Player, Tuple2[Hand, Bet]]] =
-    new Reads[Map[Player, Tuple2[Hand, Bet]]] {
+  implicit def readMap[Player, HandAndBet](implicit playerReads: Reads[Player], handAndBetReads: Reads[HandAndBet]): Reads[scala.collection.immutable.Map[Player, HandAndBet]] =
+    new Reads[Map[Player, HandAndBet]] {
       def reads(json: JsValue) = {
         json.validate[Map[String, String]].map(_.map {
-          case (key, value) => playerReads.reads(Json.parse(key)).get -> tuple2Reads.reads(Json.parse(value)).get
+          case (key, value) => playerReads.reads(Json.parse(key)).get -> handAndBetReads.reads(Json.parse(value)).get
         })
       }
     }

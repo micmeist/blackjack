@@ -26,7 +26,7 @@ define(function () {
     controllers.GameController.$inject = ["$scope", "$location", "gameService"];
 
     controllers.RoundController = function ($scope, gameService) {
-        $scope.service = gameService
+        $scope.players = gameService.getPlayers()
     }
     controllers.RoundController.$inject = ["$scope", "gameService"];
 

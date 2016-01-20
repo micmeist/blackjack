@@ -13,38 +13,26 @@ define(['angular'], function (angular) {
     factory("gameService", function ($http) {
         var game;
         var round;
-        var message = null;
         return {
             newGame: function () {
                 game = null;
-                $http.get("game/new").then(function (response) {
-                    game = response.data;
-                    message = null;
-                }, function(response){
-                    message = response.status + ": " +  response.statusText
-                });
+                return $http.get("game/new");
             },
-            newRound: function () {
-                $http({
+            newRound: function (game) {
+                return $http({
                     method: "POST",
                     url: "round/new",
                     data: game
-                }).then(function (response) {
-                    round = response.data;
-                    message = null;
-                }, function (response) {
-                    //TODO: Error handling
-                    message = response.status + ": " +  response.statusText
                 });
             },
-            getGamePlayers: function (){
+            getGamePlayers: function (game) {
                 return $http({
                     method: "POST",
                     url: "game/players",
                     data: game
                 });
             },
-            getRoundPlayers: function (){
+            getRoundPlayers: function (round) {
                 return $http({
                     method: "POST",
                     url: "round/players",

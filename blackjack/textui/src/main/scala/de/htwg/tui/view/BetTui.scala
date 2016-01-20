@@ -13,7 +13,7 @@ object BetTui extends Tui {
     println("Insert the amount to bet.")
   }
 
-  def proccessUserInput(d: Double, round: Round, player: HumanPlayer): Boolean = {
+  def proccessUserInput(d: Int, round: Round, player: HumanPlayer): Boolean = {
     d match {
       case amount =>
         round.bet(player, amount)
@@ -29,7 +29,7 @@ object BetTui extends Tui {
         while (continue) {
           println("Player " + player.name + " you have " + player.getMoney + " make your bet.")
           printMenu
-          continue = proccessUserInput(StdIn.readDouble(), round, player.asInstanceOf[HumanPlayer])
+          continue = proccessUserInput(StdIn.readInt(), round, player.asInstanceOf[HumanPlayer])
         }
       }
     }

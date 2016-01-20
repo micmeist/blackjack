@@ -11,12 +11,10 @@ class RoundTest extends FlatSpec with Matchers with BeforeAndAfter {
 
   var game: Game = null
   var round: Round = null
-  var humanPlayer: HumanPlayer = null
 
   before {
     game = new Game
     round = new Round(game)
-    humanPlayer = round.getPlayers.head.asInstanceOf[HumanPlayer]
   }
 
   "In a new round every Player" should "have two cards" in {
@@ -28,21 +26,30 @@ class RoundTest extends FlatSpec with Matchers with BeforeAndAfter {
   }
 
   "In a new round with 2 players" should "the second Player have the second card from the deck as first card" in {
+    game = new Game
+    val card = game.deck(1)
+    round = new Round(game)
     assert(game.players.length == 2)
     val option: Option[Tuple2[Hand, Bet]] = round.playersAndHandsAndBets.get(game.players(1))
-    option.get._1.cards(1) should be(game.deck(1))
+    option.get._1.cards(1) should be(card)
   }
 
   it should "the first Player have the first card from the deck as first card" in {
+    game = new Game
+    val card = game.deck(0)
+    round = new Round(game)
     assert(game.players.length == 2)
     val option: Option[Tuple2[Hand, Bet]] = round.playersAndHandsAndBets.get(game.players.head)
-    option.get._1.cards(1) should be(game.deck(0))
+    option.get._1.cards(1) should be(card)
   }
 
   it should "the first Player have the third card from the deck as second card" in {
+    game = new Game
+    val card = game.deck(2)
+    round = new Round(game)
     assert(game.players.length == 2)
     val option: Option[Tuple2[Hand, Bet]] = round.playersAndHandsAndBets.get(game.players.head)
-    option.get._1.cards(0) should be(game.deck(2))
+    option.get._1.cards(0) should be(card)
   }
 
   "In a Round where Players hand is higher than banks hand" should "player be winner" in {
@@ -99,6 +106,7 @@ class RoundTest extends FlatSpec with Matchers with BeforeAndAfter {
   }
 
   "When a human player bets" should "his bet be 10 if he bets 10" in {
+    val humanPlayer = round.getPlayers.head.asInstanceOf[HumanPlayer]
     round.bet(humanPlayer, 10)
     round.getBetOfPlayer(humanPlayer).getAmount() should be(10)
   }

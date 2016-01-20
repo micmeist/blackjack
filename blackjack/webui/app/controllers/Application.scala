@@ -1,25 +1,58 @@
 package controllers
 
 import de.htwg.core.GameCoreController
-import de.htwg.core.entities.Game
+import de.htwg.core.entities.{Round, Game}
+import play.api.libs.json.{JsError, Json}
 import play.api.mvc._
 
 object Application extends Controller {
-  
+
   def index = Action {
     Ok(views.html.index())
   }
 
-  def startNewGame = Action {
-    val game: Game = GameCoreController.startNewGame
-    Ok(views.html.game(game)).withSession("session_game" -> game.toString)
+  def newGame = Action {
+    val game = GameCoreController.startNewGame
+    Ok(Json.stringify(Json.toJson(game)))
   }
 
-  def startNewRound() = Action { request =>
-    request.session.get("session_game").map { session_game =>
-      Ok(views.html.round("Hello " + session_game))
-    }.getOrElse {
-      Unauthorized("Oops, you should not be here")
+  def newRound = Action(parse.json) { request =>
+    request.body.validate[Game].map {
+      case (game : Game) =>
+          val round = GameCoreController.startNewRound(game)
+          Ok(Json.stringify(Json.toJson(round)))
+    }.recoverTotal {
+      e => BadRequest("Detected error:" + JsError.toFlatForm(e))
+    }
+
+  }
+
+  def getRoundPlayers = Action(parse.json) { request =>
+    request.body.validate[Round].map {
+      case (round : Round) =>
+        Ok(Json.stringify(Json.toJson(round.getRoundPlayers)))
+    }.recoverTotal {
+      e => BadRequest("Detected error:" + JsError.toFlatForm(e))
     }
   }
+
+  def getGamePlayers = Action(parse.json) { request =>
+    request.body.validate[Game].map {
+      case (game : Game) =>
+        Ok(Json.stringify(Json.toJson(game.getPlayers)))
+    }.recoverTotal {
+      e => BadRequest("Detected error:" + JsError.toFlatForm(e))
+    }
+  }
+
+  def getRoundWinners = Action(parse.json) { request =>
+    request.body.validate[Round].map {
+      case (round : Round) =>
+        round.finish()
+        Ok(Json.stringify(Json.toJson(round.getWinners)))
+    }.recoverTotal {
+      e => BadRequest("Detected error:" + JsError.toFlatForm(e))
+    }
+  }
+
 }

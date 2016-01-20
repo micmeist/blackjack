@@ -1,16 +1,21 @@
 package de.htwg.core.entities
 
-import scala.collection.mutable
+import play.api.data.validation.ValidationError
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
+
+
+import scala.collection.immutable.Map
 
 /**
   * Created by Michael Meister on 19.12.2015.
   */
-class Round(game: Game) {
+class Round(private val game: Game) {
 
   private var finished: Boolean = false
 
   //TODO: use immutable List
-  private[entities] var playersAndHandsAndBets: mutable.LinkedHashMap[Player, Tuple2[Hand, Bet]] = null
+  private[entities] var playersAndHandsAndBets: Map[Player, HandAndBet] = null
   deal
 
   //TODO: Some Players may be not in round
@@ -18,13 +23,27 @@ class Round(game: Game) {
     game.players
   }
 
+  def getRoundPlayers: List[RoundPlayer] = {
+    var result: List[RoundPlayer] = List()
+    for (player <- getPlayers) {
+      result = getRoundPlayer(player) :: result
+    }
+    result
+  }
+
+  private def getRoundPlayer(player: Player): RoundPlayer = {
+    //TODO: use Option
+    val handAndBet = playersAndHandsAndBets.get(player).get
+    new RoundPlayer(player, handAndBet._1, handAndBet._2)
+  }
+
   def getHandOfPlayer(player: Player): Hand = {
-    val option: Option[Tuple2[Hand, Bet]] = playersAndHandsAndBets.get(player)
+    val option: Option[HandAndBet] = playersAndHandsAndBets.get(player)
     option.get._1
   }
 
   def getHandOfBank(): HandBank = {
-    val option: Option[Tuple2[Hand, Bet]] = playersAndHandsAndBets.get(getBank)
+    val option: Option[HandAndBet] = playersAndHandsAndBets.get(getBank)
     option.get._1.asInstanceOf[HandBank]
   }
 
@@ -33,13 +52,13 @@ class Round(game: Game) {
   }
 
   def getBetOfPlayer(player: HumanPlayer): Bet = {
-    val option: Option[Tuple2[Hand, Bet]] = playersAndHandsAndBets.get(player)
+    val option: Option[HandAndBet] = playersAndHandsAndBets.get(player)
     option.get._2
   }
 
   //TODO: Test für Fall, dass amount höher als verfügbares Geld
-  def bet(player: HumanPlayer, amount: Double): Unit = {
-    var possibleAmount: Double = 0
+  def bet(player: HumanPlayer, amount: Int): Unit = {
+    var possibleAmount: Int = 0
     if (amount > player.getMoney) {
       possibleAmount = player.getMoney
     } else {
@@ -55,7 +74,7 @@ class Round(game: Game) {
     * @param player the player who gets another card to his hand
     */
   def hit(player: Player): Unit = {
-    val handOption: Option[Tuple2[Hand, Bet]] = playersAndHandsAndBets.get(player)
+    val handOption: Option[HandAndBet] = playersAndHandsAndBets.get(player)
     handOption.get._1.addCardToHand(game.getNextCardFromDeck)
   }
 
@@ -74,6 +93,7 @@ class Round(game: Game) {
           getBank() + cash
         }
       }
+      finished = true
     }
   }
 
@@ -81,7 +101,7 @@ class Round(game: Game) {
     * @return the list of players who have an higher hand than the bank
     */
   def getWinners: List[Player] = {
-    val banksHand: HandBank = playersAndHandsAndBets.last._2._1.asInstanceOf[HandBank]
+    val banksHand: HandBank = playersAndHandsAndBets.get(getPlayers.last).get._1.asInstanceOf[HandBank]
     var winners: List[Player] = List()
     playersAndHandsAndBets.foreach(playerAndHand =>
       if (!playerAndHand._1.isInstanceOf[BankPlayer]) {
@@ -111,22 +131,68 @@ class Round(game: Game) {
   private def deal: Unit = {
     createPlayersHands
     for (x <- 0 to 1) {
-      for (playerAndHandAndBet <- playersAndHandsAndBets) {
-        playerAndHandAndBet._2._1.addCardToHand(game.getNextCardFromDeck)
+      for (player <- getPlayers) {
+        val handAndBet: HandAndBet = playersAndHandsAndBets.get(player).get
+        handAndBet._1.addCardToHand(game.getNextCardFromDeck)
       }
     }
   }
 
   private def createPlayersHands: Unit = {
-    playersAndHandsAndBets = mutable.LinkedHashMap()
+    playersAndHandsAndBets = Map()
     for (player <- game.players) {
       var hand: Hand = null
       player match {
         case a: BankPlayer => hand = new HandBank
         case b: HumanPlayer => hand = new HandHumanPlayer
       }
-      playersAndHandsAndBets += (player ->(hand, new Bet(0)))
+      playersAndHandsAndBets += (player -> new HandAndBet(hand, new Bet(0)))
     }
   }
+
+}
+
+object Round {
+
+  implicit def tuple2Writes[Player, HandAndBet](implicit aWrites: Writes[Player], bWrites: Writes[HandAndBet]): Writes[Tuple2[Player, HandAndBet]] = new Writes[Tuple2[Player, HandAndBet]] {
+    def writes(tuple: Tuple2[Player, HandAndBet]) = Json.obj(
+      "player" -> tuple._1,
+      "handAndBet" -> tuple._2
+    )
+  }
+
+  implicit def tuple2Reads[Player, HandAndBet](implicit aReads: Reads[Player], bReads: Reads[HandAndBet]): Reads[Tuple2[Player, HandAndBet]] = new Reads[Tuple2[Player, HandAndBet]] {
+    def reads(json: JsValue) = {
+      json match {
+        case JsObject(obj) => for {
+          a <- aReads.reads(obj.get("player").get)
+          b <- bReads.reads(obj.get("handAndBet").get)
+        } yield (a, b)
+        case _ => JsError(ValidationError("Expected array of two elements"))
+      }
+    }
+  }
+
+  implicit val roundWrites = new Writes[Round] {
+    def writes(round: Round) = Json.obj(
+      "game" -> round.game,
+      "playersAndHandsAndBets" -> round.playersAndHandsAndBets.toList
+    )
+  }
+
+  implicit val roundReads: Reads[Round] = (
+    (JsPath \ "game").read[Game] and
+      (JsPath \ "playersAndHandsAndBets").read[List[(Player, HandAndBet)]]
+    ) (Round.apply _)
+
+  def apply(game: Game, playersAndHandsAndBets: List[(Player, HandAndBet)]): Round = {
+    val round = new Round(game)
+    round.playersAndHandsAndBets = Map()
+    playersAndHandsAndBets.foreach(item =>
+      round.playersAndHandsAndBets += item._1 -> item._2
+    )
+    round
+  }
+
 
 }

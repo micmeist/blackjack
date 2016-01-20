@@ -1,15 +1,23 @@
 package de.htwg.core.entities
 
+import play.api.libs.json.Json
+
 /**
   * Created by Michael Meister on 09.01.2016.
   */
-class Bet(private var amount: Double) {
+case class Bet(private var amount: Int) {
 
-  def +(amount: Double): Unit = {
+  def +(amount: Int): Unit = {
     this.amount += amount
   }
 
-  def getAmount(): Double = {
+  def getAmount(): Int = {
     amount
   }
+}
+
+object Bet {
+  implicit val cardWrites = Json.writes[Bet]
+
+  implicit val betReads = Json.reads[Bet]
 }

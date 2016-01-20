@@ -8,6 +8,7 @@ GET         /                     controllers.Application.index
 POST        /round/new            controllers.Application.newRound
 POST        /round/players        controllers.Application.getRoundPlayers
 POST        /round/finish         controllers.Application.finishRound
+POST        /round/hit            controllers.Application.hit
 
 GET         /game/new             controllers.Application.newGame
 POST        /game/players         controllers.Application.getGamePlayers

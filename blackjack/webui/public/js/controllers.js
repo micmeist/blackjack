@@ -39,18 +39,39 @@ define(function () {
     };
     controllers.GameController.$inject = ["$scope", "$location", "gameService"];
 
-    controllers.RoundController = function ($scope, gameService) {
+    controllers.RoundController = function ($scope, gameService, $location) {
         $scope.round = gameService.round;
 
         $scope.stand = function () {
-            gameService.finish(gameService.round).then(function (response) {
+            finish()
+        };
+
+        $scope.hit = function () {
+            gameService.hit(gameService.round).then(function (response) {
+                gameService.round = response.data;
+                $scope.round = response.data;
+                if ($scope.round.humanRoundPlayer.hand.isBust) {
+                    finish()
+                }
+            }, function (response) {
+                $scope.errorMessage = response.status + ": " + response.statusText
+            });
+        };
+
+        $scope.backToGame = function (){
+            gameService.round = null;
+            $location.path("/game");
+        };
+
+        function finish() {
+            gameService.finish($scope.round).then(function (response) {
                 $scope.round = response.data;
             }, function (response) {
                 $scope.errorMessage = response.status + ": " + response.statusText
             });
         }
     };
-    controllers.RoundController.$inject = ["$scope", "gameService"];
+    controllers.RoundController.$inject = ["$scope", "gameService", "$location"];
 
     return controllers;
 

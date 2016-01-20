@@ -24,8 +24,11 @@
     </div>
 </div>
 <div class="row">
-    <p ng-hide="round.finished">
-        <button class="btn btn-primary">Hit</button>
+    <p ng-hide="round.finished || round.humanRoundPlayer.hand.isBust">
+        <button class="btn btn-primary" ng-click="hit()">Hit</button>
         <button class="btn btn-default" ng-click="stand()">Stand</button>
+    </p>
+    <p ng-hide="!round.finished">
+        <button class="btn btn-default" ng-click="backToGame()">Back</button>
     </p>
 </div>

@@ -54,4 +54,13 @@ object Application extends Controller {
     }
   }
 
+  def hit = Action(parse.json) { request =>
+    request.body.validate[Round].map {
+      case (round: Round) =>
+        Ok(Json.stringify(Json.toJson(round.hit(round.humanRoundPlayer.player))))
+    }.recoverTotal {
+      e => BadRequest("Detected error:" + JsError.toFlatForm(e))
+    }
+  }
+
 }

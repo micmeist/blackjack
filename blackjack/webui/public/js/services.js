@@ -32,7 +32,14 @@ define(['angular'], function (angular) {
                     data: game
                 });
             },
-            finish : function (round){
+            hit: function (game) {
+                return $http({
+                    method: "POST",
+                    url: "round/hit",
+                    data: game
+                });
+            },
+            finish: function (round) {
                 return $http({
                     method: "POST",
                     url: "round/finish",

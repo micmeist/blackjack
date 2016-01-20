@@ -33,9 +33,12 @@ abstract class Hand {
     sum
   }
 
-  final def isHigherThan(hand: Hand): Boolean = {
+  final def isWinnerComparedTo(hand: Hand): Boolean = {
     if (isBust) {
       return false
+    }
+    if(hand.isBust){
+      return true
     }
     getSum match {
       case 21 => true

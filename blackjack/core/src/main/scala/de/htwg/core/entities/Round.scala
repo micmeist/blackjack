@@ -64,7 +64,7 @@ case class Round(game: Game, bankRoundPlayer: RoundPlayer, humanRoundPlayer: Rou
   def finish(): Round = {
     if (!finished) {
       val cash = humanRoundPlayer.bet.getAmount()
-      if (humanRoundPlayer.hand isHigherThan bankRoundPlayer.hand) {
+      if (humanRoundPlayer.hand isWinnerComparedTo bankRoundPlayer.hand) {
         humanRoundPlayer.player + cash * 2
         getBank() - cash * 2
         return new Round(game, bankRoundPlayer, humanRoundPlayer.makeWinner(), true)
@@ -82,7 +82,7 @@ case class Round(game: Game, bankRoundPlayer: RoundPlayer, humanRoundPlayer: Rou
   @deprecated
   def getWinners: List[Player] = {
     val banksHand: Hand = bankRoundPlayer.hand
-    if (humanRoundPlayer.hand isHigherThan banksHand) {
+    if (humanRoundPlayer.hand isWinnerComparedTo banksHand) {
       List(humanRoundPlayer.player)
     } else {
       List()

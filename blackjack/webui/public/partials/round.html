@@ -9,7 +9,10 @@
                 <div><p>Cards:</p>
                     <p ng-repeat="card in roundPlayer.hand.visibleCards">{{card.color}} {{card.number}}</p>
                 </div>
-                <p><a href="#" class="btn btn-primary" role="button">Hit</a> <a href="#" class="btn btn-default" role="button">Stand</a></p>
+                <p ng-show="roundPlayer.player.name == turnPlayer.name">
+                    <button class="btn btn-primary">Hit</button>
+                    <button class="btn btn-default" ng-click="stand()">Stand</button>
+                </p>
             </div>
         </div>
     </div>

@@ -34,7 +34,6 @@ object Application extends Controller {
     }.recoverTotal {
       e => BadRequest("Detected error:" + JsError.toFlatForm(e))
     }
-
   }
 
   def getGamePlayers = Action(parse.json) { request =>
@@ -44,7 +43,16 @@ object Application extends Controller {
     }.recoverTotal {
       e => BadRequest("Detected error:" + JsError.toFlatForm(e))
     }
+  }
 
+  def getRoundWinners = Action(parse.json) { request =>
+    request.body.validate[Round].map {
+      case (round : Round) =>
+        round.finish()
+        Ok(Json.stringify(Json.toJson(round.getWinners)))
+    }.recoverTotal {
+      e => BadRequest("Detected error:" + JsError.toFlatForm(e))
+    }
   }
 
 }

@@ -38,6 +38,13 @@ define(['angular'], function (angular) {
                     url: "round/players",
                     data: round
                 });
+            },
+            getRoundWinners : function (round){
+                return $http({
+                    method: "POST",
+                    url: "round/winners",
+                    data: round
+                });
             }
         }
     });

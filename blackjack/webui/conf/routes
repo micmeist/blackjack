@@ -4,9 +4,12 @@
 
 # Home page
 GET         /                     controllers.Application.index
-GET         /game/new             controllers.Application.newGame
+
 POST        /round/new            controllers.Application.newRound
 POST        /round/players        controllers.Application.getRoundPlayers
+POST        /round/winners        controllers.Application.getRoundWinners
+
+GET         /game/new             controllers.Application.newGame
 POST        /game/players         controllers.Application.getGamePlayers
 
 # Map static resources from the /public folder to the /assets URL path

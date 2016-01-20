@@ -33,6 +33,16 @@ abstract class Hand {
     sum
   }
 
+  final def isHigherThan(hand: Hand): Boolean = {
+    if (isBust) {
+      return false
+    }
+    getSum match {
+      case 21 => true
+      case sum => sum > hand.getSum
+    }
+  }
+
   /**
     * @return the all cards of the hand. All cards means cards that are visible to all players during the round and
     *         cards that are not visible to all players

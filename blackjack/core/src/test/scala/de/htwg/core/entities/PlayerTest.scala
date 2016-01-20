@@ -59,8 +59,8 @@ class PlayerTest extends FlatSpec with Matchers with BeforeAndAfter {
 
   it should "be reduced when negative addition is used" in {
     val money = human.getMoney
-    human + (-100.10)
-    human.getMoney should be (money - 100.10)
+    human + (-100)
+    human.getMoney should be (money - 100)
   }
 
 }

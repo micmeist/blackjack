@@ -118,4 +118,46 @@ class HandTest extends FlatSpec with Matchers with BeforeAndAfter {
     hand.getVisibleCards().head should be(cardTwo)
   }
 
+  "When banks hand is 20 players hand" should "be winner when its sum is 21" in {
+    val bankHand: HandBank = TestUtilites.getTestHandBank(Array(10, 10))
+    val playerHand: HandHumanPlayer = TestUtilites.getTestHandHumanPlayer(Array(10, 5, 6))
+    playerHand isHigherThan bankHand should be(true)
+  }
+
+  it should "not be winner when its sum is 20" in {
+    val bankHand: HandBank = TestUtilites.getTestHandBank(Array(10, 10))
+    val playerHand: HandHumanPlayer = TestUtilites.getTestHandHumanPlayer(Array(10, 10))
+    playerHand isHigherThan bankHand should be(false)
+  }
+
+  it should "not be winner when its sum is 19" in {
+    val bankHand: HandBank = TestUtilites.getTestHandBank(Array(10, 10))
+    val playerHand: HandHumanPlayer = TestUtilites.getTestHandHumanPlayer(Array(10, 9))
+    playerHand isHigherThan bankHand should be(false)
+  }
+
+  "When banks hand is 21 players hand" should "be winner when its sum is 21" in {
+    val bankHand: HandBank = TestUtilites.getTestHandBank(Array(10, 5, 6))
+    val playerHand: HandHumanPlayer = TestUtilites.getTestHandHumanPlayer(Array(10, 5, 6))
+    playerHand isHigherThan bankHand should be(true)
+  }
+
+  it should "not be winner when its sum is 20" in {
+    val bankHand: HandBank = TestUtilites.getTestHandBank(Array(10, 5, 6))
+    val playerHand: HandHumanPlayer = TestUtilites.getTestHandHumanPlayer(Array(10, 10))
+    playerHand isHigherThan bankHand should be(false)
+  }
+
+  "When banks hand is 18 players hand" should "be winner when its sum is 19" in {
+    val bankHand: HandBank = TestUtilites.getTestHandBank(Array(10, 8))
+    val playerHand: HandHumanPlayer = TestUtilites.getTestHandHumanPlayer(Array(10, 9))
+    playerHand isHigherThan bankHand should be(true)
+  }
+
+  it should "not be winner when its sum is 10" in {
+    val bankHand: HandBank = TestUtilites.getTestHandBank(Array(10, 9))
+    val playerHand: HandHumanPlayer = TestUtilites.getTestHandHumanPlayer(Array(10))
+    playerHand isHigherThan bankHand should be(false)
+  }
+
 }

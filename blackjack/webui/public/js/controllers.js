@@ -32,7 +32,7 @@ define(function () {
                 gameService.round = response.data;
                 $location.path("/round");
             }, function (response) {
-                $scope.errorMessage = errorResponse.status + ": " + errorResponse.statusText
+                $scope.errorMessage = response.status + ": " + response.statusText
             });
 
         }
@@ -40,30 +40,14 @@ define(function () {
     controllers.GameController.$inject = ["$scope", "$location", "gameService"];
 
     controllers.RoundController = function ($scope, gameService) {
-        gameService.getRoundPlayers(gameService.round).then(function (response) {
-            $scope.roundPlayers = response.data
-        }, function (errorResponse) {
-            $scope.errorMessage = errorResponse.status + ": " + errorResponse.statusText
-        });
-        $scope.turnPlayer = gameService.round.game.players[0];
+        $scope.round = gameService.round;
 
         $scope.stand = function () {
-            nextTurn();
-        };
-
-        function nextTurn() {
-            var index = gameService.round.game.players.indexOf($scope.turnPlayer) + 1;
-            if(gameService.round.game.players.length >= index){
-                $scope.turnPlayer = gameService.round.game.players[index];
-                if($scope.turnPlayer.name == "Bank"){
-                    $scope.turnPlayer = null;
-                }
-            }else{
-                $scope.turnPlayer = null;
-            }
-            if ($scope.turnPlayer == null){
-                gameService.getRoundWinners(gameService.round)
-            }
+            gameService.finish(gameService.round).then(function (response) {
+                $scope.round = response.data;
+            }, function (response) {
+                $scope.errorMessage = response.status + ": " + response.statusText
+            });
         }
     };
     controllers.RoundController.$inject = ["$scope", "gameService"];

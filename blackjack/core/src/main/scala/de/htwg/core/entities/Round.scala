@@ -67,8 +67,10 @@ case class Round(game: Game, bankRoundPlayer: RoundPlayer, humanRoundPlayer: Rou
       if (humanRoundPlayer.hand isHigherThan bankRoundPlayer.hand) {
         humanRoundPlayer.player + cash * 2
         getBank() - cash * 2
+        return new Round(game, bankRoundPlayer, humanRoundPlayer.makeWinner(), true)
       } else {
         getBank() + cash
+        return new Round(game, bankRoundPlayer.makeWinner(), humanRoundPlayer, true)
       }
     }
     new Round(game, bankRoundPlayer, humanRoundPlayer, true)

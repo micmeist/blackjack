@@ -18,18 +18,17 @@ object Application extends Controller {
 
   def newRound = Action(parse.json) { request =>
     request.body.validate[Game].map {
-      case (game : Game) =>
-          val round = GameCoreController.startNewRound(game)
-          Ok(Json.stringify(Json.toJson(round)))
+      case (game: Game) =>
+        val round = GameCoreController.startNewRound(game)
+        Ok(Json.stringify(Json.toJson(round)))
     }.recoverTotal {
       e => BadRequest("Detected error:" + JsError.toFlatForm(e))
     }
-
   }
 
   def getRoundPlayers = Action(parse.json) { request =>
     request.body.validate[Round].map {
-      case (round : Round) =>
+      case (round: Round) =>
         Ok(Json.stringify(Json.toJson(round.getRoundPlayers)))
     }.recoverTotal {
       e => BadRequest("Detected error:" + JsError.toFlatForm(e))
@@ -38,18 +37,18 @@ object Application extends Controller {
 
   def getGamePlayers = Action(parse.json) { request =>
     request.body.validate[Game].map {
-      case (game : Game) =>
+      case (game: Game) =>
         Ok(Json.stringify(Json.toJson(game.getPlayers)))
     }.recoverTotal {
       e => BadRequest("Detected error:" + JsError.toFlatForm(e))
     }
   }
 
-  def getRoundWinners = Action(parse.json) { request =>
+
+  def finishRound = Action(parse.json) { request =>
     request.body.validate[Round].map {
-      case (round : Round) =>
-        round.finish()
-        Ok(Json.stringify(Json.toJson(round.getWinners)))
+      case (round: Round) =>
+        Ok(Json.stringify(Json.toJson(round.finish())))
     }.recoverTotal {
       e => BadRequest("Detected error:" + JsError.toFlatForm(e))
     }

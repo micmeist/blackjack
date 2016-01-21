@@ -21,11 +21,7 @@ define(function () {
     controllers.HomeController.$inject = ["$scope", "$location", "gameService"];
 
     controllers.GameController = function ($scope, $location, gameService) {
-        gameService.getGamePlayers(gameService.game).then(function (response) {
-            $scope.gamePlayers = response.data
-        }, function (errorResponse) {
-            $scope.errorMessage = errorResponse.status + ": " + errorResponse.statusText
-        });
+        $scope.game = gameService.game;
 
         $scope.newRound = function () {
             gameService.newRound(gameService.game).then(function (response) {
@@ -41,6 +37,17 @@ define(function () {
 
     controllers.RoundController = function ($scope, gameService, $location) {
         $scope.round = gameService.round;
+        $scope.betsFinished = false;
+
+        $scope.bet = function () {
+            $scope.betsFinished = true;
+            gameService.bet($scope.round, $scope.betAmount).then(function (response) {
+                gameService.round = response.data;
+                $scope.round = response.data;
+            }, function (response) {
+                $scope.errorMessage = response.status + ": " + response.statusText
+            });
+        };
 
         $scope.stand = function () {
             finish()
@@ -58,13 +65,15 @@ define(function () {
             });
         };
 
-        $scope.backToGame = function (){
+        $scope.backToGame = function () {
+            gameService.game = $scope.round.game
             gameService.round = null;
             $location.path("/game");
         };
 
         function finish() {
             gameService.finish($scope.round).then(function (response) {
+                gameService.round = response.data;
                 $scope.round = response.data;
             }, function (response) {
                 $scope.errorMessage = response.status + ": " + response.statusText

@@ -31,7 +31,8 @@ object Game {
     def writes(game: Game) = Json.obj(
       "deck" -> game.deck,
       "bank" -> game.bank,
-      "player" -> game.player
+      "player" -> game.player,
+      "players" -> game.getPlayers
     )
   }
 

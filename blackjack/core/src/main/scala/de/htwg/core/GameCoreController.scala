@@ -8,10 +8,10 @@ import de.htwg.core.entities.{Round, Game}
 object GameCoreController {
 
   def startNewGame: Game = {
-    new Game
+    Game.createGame()
   }
 
   def startNewRound (game: Game): Round = {
-    new Round(game)
+    Round.createRound(game)
   }
 }

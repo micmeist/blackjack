@@ -1,3 +1,4 @@
+<div class="alert alert-danger" role="alert" ng-show="errorMessage">{{errorMessage}}</div>
 <div class="panel panel-default">
     <!-- Default panel contents -->
     <div class="panel-heading">All Players in Game</div>
@@ -6,7 +7,7 @@
     <table class="table table-striped">
         <tr><th>Name</th><th>Money</th></tr>
 
-        <tr ng-repeat="player in service.getGame().players">
+        <tr ng-repeat="player in game.players">
             <td>{{player.name}}</td>
             <td>{{player.money}}</td></tr>
     </table>

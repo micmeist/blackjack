@@ -19,5 +19,5 @@ case class Bet(private var amount: Int) {
 object Bet {
   implicit val cardWrites = Json.writes[Bet]
 
-  implicit val cardReads = Json.reads[Bet]
+  implicit val betReads = Json.reads[Bet]
 }

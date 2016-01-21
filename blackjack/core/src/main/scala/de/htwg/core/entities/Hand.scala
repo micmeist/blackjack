@@ -33,6 +33,19 @@ abstract class Hand {
     sum
   }
 
+  final def isWinnerComparedTo(hand: Hand): Boolean = {
+    if (isBust) {
+      return false
+    }
+    if(hand.isBust){
+      return true
+    }
+    getSum match {
+      case 21 => true
+      case sum => sum > hand.getSum
+    }
+  }
+
   /**
     * @return the all cards of the hand. All cards means cards that are visible to all players during the round and
     *         cards that are not visible to all players
@@ -75,9 +88,9 @@ class HandHumanPlayer extends Hand {
 object Hand {
   implicit val handWrites = new Writes[Hand] {
     def writes(hand: Hand) = Json.obj(
-      "cards" -> hand.cards,
+      "cards" -> hand.getAllCards(),
+      "visibleCards" -> hand.getVisibleCards(),
       "isBust" -> hand.isBust,
-      "sum" -> hand.getSum,
       "isBank" -> hand.isBank()
     )
   }

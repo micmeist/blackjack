@@ -13,44 +13,45 @@ define(['angular'], function (angular) {
     factory("gameService", function ($http) {
         var game;
         var round;
-        var message = null;
         return {
             newGame: function () {
                 game = null;
-                $http.get("game/new").then(function (response) {
-                    game = response.data;
-                });
+                return $http.get("game/new");
             },
-            getGame: function () {
-                return game;
-            },
-            newRound: function () {
-                $http({
+            newRound: function (game) {
+                return $http({
                     method: "POST",
                     url: "round/new",
                     data: game
-                }).then(function (response) {
-                    round = response.data;
-                }, function (response) {
-                    //TODO: Error handling
-                    message = response.statusText
                 });
             },
-            getPlayers: function (){
-                $http({
+            getGamePlayers: function (game) {
+                return $http({
                     method: "POST",
-                    url: "round/players",
-                    data: round
-                }).then(function (response) {
-                    return response.data;
-                }, function (response) {
-                    //TODO: Error handling
-                    message = response.statusText
-                    return false
+                    url: "game/players",
+                    data: game
                 });
             },
-            getMessage : function (){
-                return message;
+            hit: function (round) {
+                return $http({
+                    method: "POST",
+                    url: "round/hit",
+                    data: round
+                });
+            },
+            bet: function (round, amount) {
+                return $http({
+                    method: "POST",
+                    url: "round/bet/" + amount,
+                    data: round
+                });
+            },
+            finish: function (round) {
+                return $http({
+                    method: "POST",
+                    url: "round/finish",
+                    data: round
+                });
             }
         }
     });

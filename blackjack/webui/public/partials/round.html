@@ -1,0 +1,47 @@
+<div class="alert alert-danger" role="alert" ng-show="errorMessage">{{errorMessage}}</div>
+<div class="row">
+    <div class="col-sm-6 col-md-4">
+        <div class="thumbnail">
+            <div class="caption">
+                <h3>{{round.bankRoundPlayer.player.name}} <span ng-hide="!round.bankRoundPlayer.winner">Winner!</span>
+                </h3>
+                <div ng-hide="!betsFinished">
+                    <p>Cards:</p>
+                    <p ng-repeat="card in round.bankRoundPlayer.hand.visibleCards">{{card.color}} {{card.number}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="thumbnail">
+            <div class="caption">
+                <h3>{{round.humanRoundPlayer.player.name}} <span ng-hide="!round.humanRoundPlayer.winner">Winner!</span>
+                </h3>
+                <p>Money: {{round.humanRoundPlayer.player.money}} $</p>
+                <p>Bet: {{round.humanRoundPlayer.bet.amount}} $</p>
+                <div><p>Cards:</p>
+                    <p ng-repeat="card in round.humanRoundPlayer.hand.visibleCards">{{card.color}} {{card.number}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <form class="form-inline" ng-submit="bet()" ng-hide="betsFinished">
+        <div class="form-group">
+            <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+            <div class="input-group">
+                <div class="input-group-addon">$</div>
+                <input required ng-model="betAmount" type="number" class="form-control" id="exampleInputAmount" placeholder="Amount">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-default">Bet</button>
+    </form>
+    <p ng-hide="!betsFinished || round.finished || round.humanRoundPlayer.hand.isBust">
+        <button class="btn btn-primary" ng-click="hit()">Hit</button>
+        <button class="btn btn-default" ng-click="stand()">Stand</button>
+    </p>
+    <p ng-hide="!round.finished">
+        <button class="btn btn-default" ng-click="backToGame()">Back</button>
+    </p>
+</div>

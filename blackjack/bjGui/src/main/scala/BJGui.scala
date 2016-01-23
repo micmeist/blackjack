@@ -19,6 +19,8 @@ object BJGui extends SimpleSwingApplication {
     title = "Blackjack"
 
     // alle Kartenbilder als Labelicons
+    // labels erst erstellen wenn Karte benötigt über String+String+".png"
+    // + über getResource()
     val spade_2  = new Label {
       icon = new ImageIcon("spade_2.png")
     }
@@ -244,7 +246,6 @@ object BJGui extends SimpleSwingApplication {
     }
 
     //val flowPanelN = new FlowPanel()
-    val list:List[Label] = Nil
     val flowPanelS = new FlowPanel () {}
 
     // setze primäres Layout
@@ -282,7 +283,6 @@ object BJGui extends SimpleSwingApplication {
       case ButtonClicked(component) if component == bnNewRound =>
         startNewRound
       case KeyPressed(_, Key.Enter, _, _) =>
-        //def isAllDigits(x: String) = x forall Character.isDigit
         if(!(txtStake.text.forall { _.isDigit })) {
           Dialog.showMessage(new FlowPanel, "Please use numbers only!")
           txtStake.text = ""
@@ -291,6 +291,7 @@ object BJGui extends SimpleSwingApplication {
           txtStake.enabled = false
           bnGiveCard.enabled = true
           bnStand.enabled = true
+          // + Gewinn anzeigen evtl
         }
     }
 
@@ -310,9 +311,11 @@ object BJGui extends SimpleSwingApplication {
 
       for (card<-cards) {
           val cardComp = card.color + "_" + card.weight.toString
-         // doesnt work ;D new card<->label match :) Name einer Variablen bekommen funz leider nicht...; flowPanelN.contents += cardComp.asInstanceOf[Label]
+
       }
     }
+
+
 
   }
 

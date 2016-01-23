@@ -215,7 +215,7 @@ object BJGui extends SimpleSwingApplication {
     }
 
     val lblCenterDefault = new Label {
-      icon = new ImageIcon("blackjack.png")
+      icon = new ImageIcon(getClass.getResource("blackjack.png"))
     }
     val lblCenterWon = new Label {
       icon = new ImageIcon("winner.jpg")

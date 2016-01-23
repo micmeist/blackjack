@@ -34,9 +34,8 @@ object GameCoreController {
     round.bet(amount)
   }
 
-  //TODO: Lost Game
   def lost(game: Game) : Game = {
-    game
+    game.checkLostGame
   }
 
 }

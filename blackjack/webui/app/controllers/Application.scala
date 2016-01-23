@@ -26,24 +26,14 @@ object Application extends Controller {
     }
   }
 
-  def getRoundPlayers = Action(parse.json) { request =>
-    request.body.validate[Round].map {
-      case (round: Round) =>
-        Ok(Json.stringify(Json.toJson(round.getRoundPlayers)))
-    }.recoverTotal {
-      e => BadRequest("Detected error:" + JsError.toFlatForm(e))
-    }
-  }
-
-  def getGamePlayers = Action(parse.json) { request =>
+  def lost = Action(parse.json) { request =>
     request.body.validate[Game].map {
       case (game: Game) =>
-        Ok(Json.stringify(Json.toJson(game.getPlayers)))
+        Ok(Json.stringify(Json.toJson(GameCoreController.lost(game))))
     }.recoverTotal {
       e => BadRequest("Detected error:" + JsError.toFlatForm(e))
     }
   }
-
 
   def finishRound = Action(parse.json) { request =>
     request.body.validate[Round].map {

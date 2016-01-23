@@ -1,7 +1,9 @@
 <div class="alert alert-danger" role="alert" ng-show="errorMessage">{{errorMessage}}</div>
-<div class="panel panel-primary">
+<div class="panel" ng-class="panelStyle">
     <!-- Default panel contents -->
-    <div class="panel-heading">All Players in Game</div>
+    <div class="panel-heading">All Players in Game
+        <span ng-show="game.isLost"> - Game over!</span>
+    </div>
 
     <!-- Table -->
     <table class="table table-striped">
@@ -17,4 +19,5 @@
     </table>
 </div>
 
-<button class="btn btn-primary" ng-click="newRound()">New Round</button>
+<button class="btn btn-primary" ng-hide="game.isLost" ng-click="newRound()">New Round</button>
+<a type="button" class="btn btn-default" href="/">Back</a>

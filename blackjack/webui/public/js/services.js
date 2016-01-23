@@ -25,10 +25,10 @@ define(['angular'], function (angular) {
                     data: game
                 });
             },
-            getGamePlayers: function (game) {
+            lost: function (game) {
                 return $http({
                     method: "POST",
-                    url: "game/players",
+                    url: "game/lost",
                     data: game
                 });
             },

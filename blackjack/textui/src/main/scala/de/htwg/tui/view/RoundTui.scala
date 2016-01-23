@@ -57,7 +57,7 @@ object RoundTui extends Tui {
 
   def start(roundParam: Round): Game = {
     var round = roundParam
-    println("New Round started")
+    println("---------New Round started---------")
 
     /**
       * Das Blackjack-Spiel beginnt mit dem Einsatz der Spieler.

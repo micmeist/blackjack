@@ -1,7 +1,9 @@
 <div class="alert alert-danger" role="alert" ng-show="errorMessage">{{errorMessage}}</div>
 <div class="row">
-    <div class="panel panel-primary">
-        <div class="panel-heading">{{round.bankRoundPlayer.player.name}} <span ng-hide="!round.bankRoundPlayer.winner">Winner!</span>
+    <div class="panel" ng-class="bankPanelStyle">
+        <div class="panel-heading">{{round.bankRoundPlayer.player.name}}
+            <span ng-hide="!round.bankRoundPlayer.winner"> - Winner!</span>
+            <span ng-hide="!round.bankRoundPlayer.hand.isBust"> - Bust!</span>
         </div>
         <div class="panel-body" ng-hide="!betsFinished">
             <div ng-hide="round.finished">
@@ -16,9 +18,11 @@
     </div>
 </div>
 <div class="row">
-    <div class="panel panel-primary">
-        <div class="panel-heading">{{round.humanRoundPlayer.player.name}} <span
-                ng-hide="!round.humanRoundPlayer.winner">Winner!</span></div>
+    <div class="panel" ng-class="humanPanelStyle">
+        <div class="panel-heading">{{round.humanRoundPlayer.player.name}}
+            <span ng-hide="!round.humanRoundPlayer.winner"> - Winner!</span>
+            <span ng-hide="!round.humanRoundPlayer.hand.isBust"> - Bust!</span>
+        </div>
         <div class="panel-body">
             <p>Money: {{round.humanRoundPlayer.player.money}} $</p>
             <p>Bet: {{round.humanRoundPlayer.bet.amount}} $</p>

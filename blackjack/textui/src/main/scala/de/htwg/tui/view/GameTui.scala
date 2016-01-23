@@ -17,7 +17,8 @@ object GameTui extends Tui {
   def proccessUserInput(s: String, game: Game): (Boolean, Game) = {
     s match {
       case "n" =>
-        (true, RoundTui.start(GameCoreController.startNewRound(game)))
+        val gameResult = RoundTui.start(GameCoreController.startNewRound(game))
+        (true, GameCoreController.lost(gameResult))
       case "b" => (false, game)
       case _ => (true, game)
     }
@@ -25,13 +26,17 @@ object GameTui extends Tui {
 
   def start(gameParam: Game): Unit = {
     var game: Game = gameParam
-    print("New Game started\n")
+    println("---------New Game started---------")
     var continue: Boolean = true
     while (continue) {
       printMenu
       val result: Tuple2[Boolean, Game] = proccessUserInput(StdIn.readLine(), game)
-      continue = result._1
       game = result._2
+      continue = result._1
+      if(game.isLost){
+        println("---------Game Over!---------")
+        continue = false
+      }
     }
   }
 

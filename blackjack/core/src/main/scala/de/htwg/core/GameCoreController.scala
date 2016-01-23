@@ -19,7 +19,7 @@ object GameCoreController {
     * Finishes the round: Sets round status to finished, calculates winnings for players and bank and pay them out.
     */
   def finish(round: Round): Round = {
-    round.finish()
+    round.hitBank().finish()
   }
 
   /**

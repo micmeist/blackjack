@@ -5,9 +5,13 @@ import play.api.libs.json.Json
 /**
   * Created by Michael Meister on 18.01.2016.
   */
-case class RoundPlayer (player: Player, hand: Hand, bet: Bet, winner: Boolean = false){
+case class RoundPlayer(player: Player, hand: Hand, bet: Bet, winner: Boolean = false) {
 
-  def bet(amount: Int): Unit = {
+  private[entities] def hasToHit: Boolean = {
+    hand.getSum < RoundPlayer.hitBorder
+  }
+
+  private[entities] def bet(amount: Int): Unit = {
     var possibleAmount: Int = 0
     if (amount > player.money) {
       possibleAmount = player.money
@@ -22,14 +26,13 @@ case class RoundPlayer (player: Player, hand: Hand, bet: Bet, winner: Boolean = 
     hand.addCardToHand(card)
   }
 
-  private[entities] def makeWinner(): RoundPlayer ={
-    new RoundPlayer(player, hand, bet, true)
-  }
-
 }
 
 
 object RoundPlayer {
+
+  final val hitBorder: Int = 17
+
   implicit val roundPlayerWrites = Json.writes[RoundPlayer]
 
   implicit val roundPlayerReads = Json.reads[RoundPlayer]

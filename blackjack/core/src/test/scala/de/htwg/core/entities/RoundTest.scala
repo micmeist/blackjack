@@ -12,7 +12,7 @@ class RoundTest extends FlatSpec with Matchers with BeforeAndAfter {
   var round: Round = null
 
   before {
-    game =  Game.createGame()
+    game = Game.createGame()
     round = Round.createRound(game)
   }
 
@@ -28,7 +28,7 @@ class RoundTest extends FlatSpec with Matchers with BeforeAndAfter {
     game = Game.createGame()
     val card = game.deck(1)
     round = Round.createRound(game)
-    assert(round.getPlayers.length == 2)
+    assert(round.getRoundPlayers.length == 2)
     round.bankRoundPlayer.hand.cards(1) should be(card)
   }
 
@@ -36,7 +36,7 @@ class RoundTest extends FlatSpec with Matchers with BeforeAndAfter {
     game = Game.createGame()
     val card = game.deck(0)
     round = Round.createRound(game)
-    assert(round.getPlayers.length == 2)
+    assert(round.getRoundPlayers.length == 2)
     round.humanRoundPlayer.hand.cards(1) should be(card)
   }
 
@@ -44,7 +44,7 @@ class RoundTest extends FlatSpec with Matchers with BeforeAndAfter {
     game = Game.createGame()
     val card = game.deck(2)
     round = Round.createRound(game)
-    assert(round.getPlayers.length == 2)
+    assert(round.getRoundPlayers.length == 2)
     round.humanRoundPlayer.hand.cards(0) should be(card)
   }
 
@@ -53,15 +53,14 @@ class RoundTest extends FlatSpec with Matchers with BeforeAndAfter {
     val bankHand: HandBank = TestUtilites.getTestHandBank(Array(10, 9))
     val player: HumanPlayer = new HumanPlayer
     val bank: BankPlayer = new BankPlayer
-    round = new Round(game, new RoundPlayer(bank, bankHand, new Bet(0)), new RoundPlayer(player, playerHand, new Bet(0)), false)
-    //Bank has to be last player
-    round.getWinners.contains(player) && !round.getWinners.contains(bank) should be(true)
+    round = Round(game, new RoundPlayer(bank, bankHand, new Bet(0)), new RoundPlayer(player, playerHand, new Bet(0)), false)
+    round = round.finish()
+    round.humanRoundPlayer.winner && !round.bankRoundPlayer.winner should be(true)
   }
 
   "When a human player bets" should "his bet be 10 if he bets 10" in {
-    val humanPlayer = round.getPlayers.head.asInstanceOf[HumanPlayer]
     GameCoreController.bet(round, 10)
-    round.getBetOfPlayer(humanPlayer).getAmount() should be(10)
+    round.humanRoundPlayer.bet.getAmount() should be(10)
   }
 
 }

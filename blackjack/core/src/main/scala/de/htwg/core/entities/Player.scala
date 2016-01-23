@@ -8,8 +8,6 @@ import play.api.libs.functional.syntax._
   */
 abstract class Player(val name: String, val money: Int) {
 
-  //TODO: Bank logic
-
   /**
     * Adds the given amount to the money of the player
     *

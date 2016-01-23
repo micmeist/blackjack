@@ -84,7 +84,7 @@ object RoundTui extends Tui {
         }
       }
     }
-    round = round.finish()
+    round = GameCoreController.finish(round)
     printAllCardsAndBetsOfPlayers(round)
     printWinners(round)
     round.game

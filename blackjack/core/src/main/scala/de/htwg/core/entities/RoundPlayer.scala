@@ -9,8 +9,8 @@ case class RoundPlayer (player: Player, hand: Hand, bet: Bet, winner: Boolean = 
 
   def bet(amount: Int): Unit = {
     var possibleAmount: Int = 0
-    if (amount > player.getMoney) {
-      possibleAmount = player.getMoney
+    if (amount > player.money) {
+      possibleAmount = player.money
     } else {
       possibleAmount = amount
     }

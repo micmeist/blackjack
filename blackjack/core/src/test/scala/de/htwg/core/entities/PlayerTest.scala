@@ -16,51 +16,35 @@ class PlayerTest extends FlatSpec with Matchers with BeforeAndAfter {
   }
 
   "Banks money" should "be reduced when subtraction is used" in {
-    val money = bank.getMoney
-    bank - 100
-    bank.getMoney should be (money - 100)
+    (bank - 100).money should be(bank.money - 100)
   }
 
   it should "be raised when negative subtraction is used" in {
-    val money = bank.getMoney
-    bank - (-100)
-    bank.getMoney should be (money + 100)
+    (bank - (-100)).money should be(bank.money + 100)
   }
 
   it should "be raised when addition is used" in {
-    val money = bank.getMoney
-    bank + 100
-    bank.getMoney should be (money + 100)
+    (bank + 100).money should be(bank.money + 100)
   }
 
   it should "be reduced when negative addition is used" in {
-    val money = bank.getMoney
-    bank + (-100)
-    bank.getMoney should be (money - 100)
+    (bank + (-100)).money should be(bank.money - 100)
   }
 
   "A human players money" should "be reduced when subtraction is used" in {
-    val money = human.getMoney
-    human - 100
-    human.getMoney should be (money - 100)
+    (human - 100).money should be(human.money - 100)
   }
 
   it should "be raised when negative subtraction is used" in {
-    val money = human.getMoney
-    human - (-100)
-    human.getMoney should be (money + 100)
+    (human - (-100)).money should be(human.money + 100)
   }
 
   it should "be raised when addition is used" in {
-    val money = human.getMoney
-    human + 100
-    human.getMoney should be (money + 100)
+    (human + 100).money should be(human.money + 100)
   }
 
   it should "be reduced when negative addition is used" in {
-    val money = human.getMoney
-    human + (-100)
-    human.getMoney should be (money - 100)
+    (human + (-100)).money should be(human.money - 100)
   }
 
 }

@@ -14,22 +14,24 @@ object GameTui extends Tui {
     print("Press a key to select an option: \n  n: new Round \n  b:back \n")
   }
 
-  def proccessUserInput(s: String, game: Game): Boolean = {
+  def proccessUserInput(s: String, game: Game): (Boolean, Game) = {
     s match {
       case "n" =>
-        RoundTui.start(GameCoreController.startNewRound(game))
-        true
-      case "b" => false
-      case _ => true
+        (true, RoundTui.start(GameCoreController.startNewRound(game)))
+      case "b" => (false, game)
+      case _ => (true, game)
     }
   }
 
-  def start(game: Game): Unit = {
+  def start(gameParam: Game): Unit = {
+    var game: Game = gameParam
     print("New Game started\n")
     var continue: Boolean = true
     while (continue) {
       printMenu
-      continue = proccessUserInput(StdIn.readLine(), game)
+      val result: Tuple2[Boolean, Game] = proccessUserInput(StdIn.readLine(), game)
+      continue = result._1
+      game = result._2
     }
   }
 

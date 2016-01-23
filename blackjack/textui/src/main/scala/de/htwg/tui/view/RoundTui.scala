@@ -1,6 +1,7 @@
 package de.htwg.tui.view
 
-import de.htwg.core.entities.{HumanPlayer, Player, Round, BankPlayer}
+import de.htwg.core.GameCoreController
+import de.htwg.core.entities._
 
 import scala.io.StdIn
 
@@ -15,55 +16,53 @@ object RoundTui extends Tui {
 
   def printVisibleCardsOfPlayers(round: Round): Unit = {
     println("Cards:")
-    for (player <- round.getPlayers) {
-      println(player.name + " " + round.getHandOfPlayer(player).visibleCards)
+    for (roundPlayer <- round.getRoundPlayers) {
+      println(roundPlayer.player.name + " " + roundPlayer.hand.visibleCards)
     }
   }
 
   def printAllCardsAndBetsOfPlayers(round: Round): Unit = {
     println("Name | Cards | Bet")
-    for (player <- round.getPlayers) {
-      print(player.name + " | " + round.getHandOfPlayer(player).getAllCards)
-      if (player.isInstanceOf[HumanPlayer]) {
-        print(" | " + round.getBetOfPlayer(player.asInstanceOf[HumanPlayer]).getAmount())
+    for (roundPlayer <- round.getRoundPlayers) {
+      print(roundPlayer.player.name + " | " + roundPlayer.hand.allCards())
+      if (roundPlayer.player.isInstanceOf[HumanPlayer]) {
+        print(" | " + roundPlayer.bet.getAmount())
       }
       println()
     }
   }
 
   def printWinners(round: Round): Unit = {
-    val winners: List[Player] = round.getWinners
-    if (winners.nonEmpty) {
-      println("Winners in this round:")
-      for (winner <- winners) {
-        println(winner.name)
-      }
+    if (round.humanRoundPlayer.winner) {
+      println(round.humanRoundPlayer.player.name + " has won")
     } else {
-      println("There are no winners in this round")
+      println("Bank has won")
     }
   }
 
-  def proccessUserInput(s: String, round: Round, player: Player): Boolean = {
+  def proccessUserInput(s: String, roundParam: Round, player: Player): (Boolean, Round) = {
+    var round = roundParam
     s match {
-      case "h" => round.hit(player)
-        if (round.getHandOfPlayer(player).isBust) {
+      case "h" => round = GameCoreController.hit(round)
+        if (round.humanRoundPlayer.hand.isBust) {
           println("Player " + player.name + ", your hand is bust")
-          false
+          (false, round)
         } else {
-          true
+          (true, round)
         }
-      case "s" => false
-      case _ => true
+      case "s" => (false, round)
+      case _ => (true, round)
     }
   }
 
-  def start(round: Round): Unit = {
+  def start(roundParam: Round): Game = {
+    var round = roundParam
     println("New Round started")
 
     /**
       * Das Blackjack-Spiel beginnt mit dem Einsatz der Spieler.
       */
-    BetTui.start(round)
+    round = BetTui.start(round)
 
     /**
       * Dann beginnt das Blackjack-Spiel mit dem Austeilen der Karten.
@@ -72,19 +71,22 @@ object RoundTui extends Tui {
       * können so viele weitere Karten fordern, wie sie möchten, aber sobald sie die 21 überschreiten, ist die Hand
       * “bust” und der Einsatz wird vom Dealer eingesammelt.
       */
-    for (player <- round.getPlayers) {
-      if (!player.isInstanceOf[BankPlayer]) {
+    for (roundPlayer <- round.getRoundPlayers) {
+      if (!roundPlayer.player.isInstanceOf[BankPlayer]) {
         var continue: Boolean = true
         while (continue) {
           printVisibleCardsOfPlayers(round)
-          println("Player " + player.name + ", what do you want to do?")
+          println("Player " + roundPlayer.player.name + ", what do you want to do?")
           printMenu
-          continue = proccessUserInput(StdIn.readLine(), round, player)
+          val result: Tuple2[Boolean, Round]  = proccessUserInput(StdIn.readLine(), round, roundPlayer.player)
+          continue = result._1
+          round = result._2
         }
       }
     }
-    round.finish()
+    round = round.finish()
     printAllCardsAndBetsOfPlayers(round)
     printWinners(round)
+    round.game
   }
 }

@@ -8,6 +8,7 @@ import play.api.libs.json._
   */
 case class Round(game: Game, bankRoundPlayer: RoundPlayer, humanRoundPlayer: RoundPlayer, finished: Boolean) {
 
+  @deprecated
   def getPlayers: List[Player] = {
     game.getPlayers
   }
@@ -50,7 +51,7 @@ case class Round(game: Game, bankRoundPlayer: RoundPlayer, humanRoundPlayer: Rou
     * Adds another card from the game deck to players hand
     */
   def hit(): Round = {
-     humanRoundPlayer.hit(game.getNextCardFromDeck)
+    humanRoundPlayer.hit(game.getNextCardFromDeck)
     this
   }
 
@@ -61,15 +62,15 @@ case class Round(game: Game, bankRoundPlayer: RoundPlayer, humanRoundPlayer: Rou
     if (!finished) {
       val cash = humanRoundPlayer.bet.getAmount()
       if (humanRoundPlayer.hand isWinnerComparedTo bankRoundPlayer.hand) {
-        humanRoundPlayer.player + cash * 2
-        getBank() - cash * 2
-        return new Round(game, bankRoundPlayer, humanRoundPlayer.makeWinner(), true)
+        val human = RoundPlayer(humanRoundPlayer.player + cash * 2, humanRoundPlayer.hand, humanRoundPlayer.bet, true)
+        val bank = RoundPlayer(bankRoundPlayer.player - cash * 2, bankRoundPlayer.hand, bankRoundPlayer.bet)
+        return Round(Game(game.deck, bank.player, human.player), bank, human, true)
       } else {
-        getBank() + cash
-        return new Round(game, bankRoundPlayer.makeWinner(), humanRoundPlayer, true)
+        val bank = RoundPlayer(bankRoundPlayer.player + cash, bankRoundPlayer.hand, bankRoundPlayer.bet, true)
+        return Round(Game(game.deck, bank.player, humanRoundPlayer.player), bank, humanRoundPlayer, true)
       }
     }
-    new Round(game, bankRoundPlayer, humanRoundPlayer, true)
+    Round(game, bankRoundPlayer, humanRoundPlayer, true)
   }
 
   /**

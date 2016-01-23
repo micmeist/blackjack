@@ -1,6 +1,7 @@
 package de.htwg.tui.view
 
-import de.htwg.core.entities.{BankPlayer, HumanPlayer, Round}
+import de.htwg.core.GameCoreController
+import de.htwg.core.entities.{BankPlayer, Player, Round}
 
 import scala.io.StdIn
 
@@ -13,25 +14,28 @@ object BetTui extends Tui {
     println("Insert the amount to bet.")
   }
 
-  def proccessUserInput(d: Int, round: Round, player: HumanPlayer): Boolean = {
+  def proccessUserInput(d: Int, round: Round, player: Player): (Boolean, Round) = {
     d match {
       case amount =>
-        round.bet(player, amount)
-        false
-      case _ => true
+        (false, GameCoreController.bet(round, amount))
+      case _ => (true, round)
     }
   }
 
-  def start(round: Round): Unit = {
-    for (player <- round.getPlayers) {
-      if (!player.isInstanceOf[BankPlayer]) {
+  def start(roundParam: Round): Round = {
+    var round: Round = roundParam
+    for (roundPlayer <- round.getRoundPlayers) {
+      if (!roundPlayer.player.isInstanceOf[BankPlayer]) {
         var continue: Boolean = true
         while (continue) {
-          println("Player " + player.name + " you have " + player.getMoney + " make your bet.")
+          println(roundPlayer.player.name + " you have " + roundPlayer.player.money + " make your bet.")
           printMenu
-          continue = proccessUserInput(StdIn.readInt(), round, player.asInstanceOf[HumanPlayer])
+          val result: Tuple2[Boolean, Round] = proccessUserInput(StdIn.readInt(), round, roundPlayer.player)
+          continue = result._1
+          round = result._2
         }
       }
     }
+    round
   }
 }

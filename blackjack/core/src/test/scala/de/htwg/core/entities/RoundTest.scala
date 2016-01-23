@@ -1,5 +1,6 @@
 package de.htwg.core.entities
 
+import de.htwg.core.GameCoreController
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
 /**
@@ -59,7 +60,7 @@ class RoundTest extends FlatSpec with Matchers with BeforeAndAfter {
 
   "When a human player bets" should "his bet be 10 if he bets 10" in {
     val humanPlayer = round.getPlayers.head.asInstanceOf[HumanPlayer]
-    round.bet(humanPlayer, 10)
+    GameCoreController.bet(round, 10)
     round.getBetOfPlayer(humanPlayer).getAmount() should be(10)
   }
 

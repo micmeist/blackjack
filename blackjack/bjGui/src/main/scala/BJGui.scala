@@ -266,7 +266,7 @@ object BJGui extends SimpleSwingApplication {
     // setze reactions 
     reactions += {
       case ButtonClicked(component) if component == bnGiveCard =>
-        round = round.hit(round.humanRoundPlayer.player)
+        round = GameCoreController.hit(round)
         updateCards
       case ButtonClicked(component) if component == bnStand =>
         bnGiveCard.enabled = false
@@ -287,7 +287,7 @@ object BJGui extends SimpleSwingApplication {
           Dialog.showMessage(new FlowPanel, "Please use numbers only!")
           txtStake.text = ""
         } else {
-          round = round.bet(round.humanRoundPlayer.player.asInstanceOf[HumanPlayer],(txtStake.text).toInt)
+          round = GameCoreController.bet(round,(txtStake.text).toInt)
           txtStake.enabled = false
           bnGiveCard.enabled = true
           bnStand.enabled = true
@@ -307,7 +307,7 @@ object BJGui extends SimpleSwingApplication {
     def updateCards() = {
       flowPanelN = new FlowPanel()
 
-      val cards:List[Card] = round.getHandOfBank().getVisibleCards()
+      val cards:List[Card] = round.bankRoundPlayer.hand.visibleCards
 
       for (card<-cards) {
           val cardComp = card.color + "_" + card.weight.toString

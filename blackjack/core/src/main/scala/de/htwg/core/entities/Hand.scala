@@ -57,7 +57,7 @@ abstract class Hand {
   /**
     * @return the cards of the hand which are visible to all players during the round
     */
-  def getVisibleCards(): List[Card]
+  def visibleCards(): List[Card]
 
   protected def isBank(): Boolean
 
@@ -69,7 +69,7 @@ class HandBank extends Hand {
     * Only the second card of banks hand is visible
     * @return the visible card and an unknown card
     */
-  override def getVisibleCards(): List[Card] = {
+  override def visibleCards(): List[Card] = {
     List(cards.head, new Card("unknown", "unknown", 0))
   }
 
@@ -78,7 +78,7 @@ class HandBank extends Hand {
 
 class HandHumanPlayer extends Hand {
 
-  override def getVisibleCards(): List[Card] = {
+  override def visibleCards(): List[Card] = {
     getAllCards
   }
 
@@ -89,7 +89,7 @@ object Hand {
   implicit val handWrites = new Writes[Hand] {
     def writes(hand: Hand) = Json.obj(
       "cards" -> hand.getAllCards(),
-      "visibleCards" -> hand.getVisibleCards(),
+      "visibleCards" -> hand.visibleCards(),
       "isBust" -> hand.isBust,
       "isBank" -> hand.isBank()
     )

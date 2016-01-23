@@ -87,7 +87,7 @@ class HandTest extends FlatSpec with Matchers with BeforeAndAfter {
     val hand: Hand = new HandHumanPlayer
     hand.addCardToHand(cardOne)
     hand.addCardToHand(cardTwo)
-    hand.getVisibleCards() should be(List(cardTwo, cardOne))
+    hand.visibleCards() should be(List(cardTwo, cardOne))
   }
   it should "have the second card on top" in {
     val cardOne = new Card("Kreuz", "K", 10)
@@ -95,7 +95,7 @@ class HandTest extends FlatSpec with Matchers with BeforeAndAfter {
     val hand: Hand = new HandHumanPlayer
     hand.addCardToHand(cardOne)
     hand.addCardToHand(cardTwo)
-    hand.getVisibleCards().head should be(cardTwo)
+    hand.visibleCards().head should be(cardTwo)
   }
 
   "A Banks hand" should "have the second card on top" in {
@@ -104,7 +104,7 @@ class HandTest extends FlatSpec with Matchers with BeforeAndAfter {
     val hand: Hand = new HandBank
     hand.addCardToHand(cardOne)
     hand.addCardToHand(cardTwo)
-    hand.getVisibleCards().head should be(cardTwo)
+    hand.visibleCards().head should be(cardTwo)
   }
 
   it should "not be fully visible" in {
@@ -113,8 +113,8 @@ class HandTest extends FlatSpec with Matchers with BeforeAndAfter {
     val hand: Hand = new HandBank
     hand.addCardToHand(cardOne)
     hand.addCardToHand(cardTwo)
-    hand.getVisibleCards()(1) should not be (cardOne)
-    hand.getVisibleCards().head should be(cardTwo)
+    hand.visibleCards()(1) should not be (cardOne)
+    hand.visibleCards().head should be(cardTwo)
   }
 
   "When banks hand is 20 players hand" should "be winner when its sum is 21" in {

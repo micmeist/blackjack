@@ -16,7 +16,7 @@ object RoundTui extends Tui {
   def printVisibleCardsOfPlayers(round: Round): Unit = {
     println("Cards:")
     for (player <- round.getPlayers) {
-      println(player.name + " " + round.getHandOfPlayer(player).getVisibleCards)
+      println(player.name + " " + round.getHandOfPlayer(player).visibleCards)
     }
   }
 

@@ -315,7 +315,7 @@ object BJGui extends SimpleSwingApplication {
       }
     }
 
-    def getImage(card: Card)
+
 
   }
 

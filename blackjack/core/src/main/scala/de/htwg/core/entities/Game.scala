@@ -7,6 +7,7 @@ import play.api.libs.functional.syntax._
 /**
   * Created by micmeist on 29.10.2015.
   */
+//TODO: Use Iterator for deck
 case class Game(var deck: List[Card], bank: Player, player: Player) {
 
   def getNextCardFromDeck: Card = {

@@ -9,11 +9,11 @@ import scala.util.Random
  */
 object GameCardStackFactory {
 
-  //TODO: fill cardstack with 312 cards
   def generateCards : List[Card]= {
+
     var cards: List[Card] = List()
-    for (index <- 0 until 13; color <- 0 until 4) {
-      cards = new Card(getColor(color), getNumber(index), getWeight(index)) :: cards
+    for (decks <- 0 until 6; weight <- 0 until 13; color <- 0 until 4) {
+      cards = new Card(getColor(color), getNumber(weight), getWeight(weight)) :: cards
     }
 
     def getColor(color: Int): String = color match {

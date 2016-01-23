@@ -40,7 +40,7 @@ case class Round(game: Game, bankRoundPlayer: RoundPlayer, humanRoundPlayer: Rou
   }
 
   //TODO: Test für Fall, dass amount höher als verfügbares Geld
-  def bet(player: HumanPlayer, amount: Int): Round = {
+  def bet(amount: Int): Round = {
     humanRoundPlayer.bet(amount)
     this
   }
@@ -48,13 +48,9 @@ case class Round(game: Game, bankRoundPlayer: RoundPlayer, humanRoundPlayer: Rou
   /**
     * Hit means player gets another card.
     * Adds another card from the game deck to players hand
-    * @param player the player who gets another card to his hand
     */
-  def hit(player: Player): Round = {
-    player match {
-      case a: BankPlayer => bankRoundPlayer.hit(game.getNextCardFromDeck)
-      case b: HumanPlayer => humanRoundPlayer.hit(game.getNextCardFromDeck)
-    }
+  def hit(): Round = {
+     humanRoundPlayer.hit(game.getNextCardFromDeck)
     this
   }
 

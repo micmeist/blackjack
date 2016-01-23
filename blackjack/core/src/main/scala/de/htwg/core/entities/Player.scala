@@ -8,6 +8,8 @@ import play.api.libs.functional.syntax._
   */
 abstract class Player(val name: String) {
 
+  //TODO: Bank logic
+
   protected var money: Int
 
   /**

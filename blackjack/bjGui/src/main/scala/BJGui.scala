@@ -1,16 +1,23 @@
-
 import scala.swing._
 import scala.swing.BorderPanel.Position._
 import javax.swing.ImageIcon
 import event._
 
+import de.htwg.core.GameCoreController
+import de.htwg.core.entities._
 
-object BJGuiMain extends SimpleSwingApplication {
-  
+
+
+object BJGui extends SimpleSwingApplication {
+
+  // globale Variablen?
+  var round = GameCoreController.startNewRound(GameCoreController.startNewGame)
+  var flowPanelN = new FlowPanel()
+
   def top = new MainFrame {
-    
+
     title = "Blackjack"
-    
+
     // alle Kartenbilder als Labelicons
     val spade_2  = new Label {
       icon = new ImageIcon("spade_2.png")
@@ -168,30 +175,78 @@ object BJGuiMain extends SimpleSwingApplication {
     val diamond_queen  = new Label {
       icon = new ImageIcon("diamond_queen.png")
     }
-    
+
     // Referenzen zu restlichen GUI Komponenten
     val bnGiveCard = new Button {
       text = "Hit me!"
+      enabled = false
     }
     val bnStand = new Button {
       text = "Stand"
-    }
-    val bnStart = new Button {
-      text = "Start the game!"
+      enabled = false
     }
     val lblStake = new Label {
       text = "Stake in $: "
     }
     val txtStake = txtField
+    txtStake.enabled = false
     val bnNewRound = new Button {
       text = "New Round!"
     }
-    
+
     // Methode um Referenz auf ein EditText zu bekommen
     def txtField = new TextField {
       horizontalAlignment = Alignment.Left
     }
-    
+
+    // fülle untergeordnete Layouts
+    val gridBagPanelE = new GridBagPanel {
+      val c = new Constraints
+
+      c.gridx = 0
+      c.gridy = 0
+      c.ipadx= 75
+      layout(bnGiveCard) = c
+
+      c.gridx = 0
+      c.gridy = 1
+      c.ipadx= 75
+      layout(bnStand) = c
+    }
+
+    val lblCenterDefault = new Label {
+      icon = new ImageIcon(getClass.getResource("blackjack.png"))
+    }
+    val lblCenterWon = new Label {
+      icon = new ImageIcon("winner.jpg")
+    }
+    val lblCenterLost = new Label {
+      icon = new ImageIcon("lost.jpg")
+    }
+
+    val gridBagPanelW = new GridBagPanel {
+
+      val c = new Constraints
+
+      c.gridx = 0
+      c.gridy = 0
+      layout(lblStake) = c
+
+      c.gridx = 1
+      c.gridy = 0
+      c.ipadx = 75
+      layout(txtStake) = c
+
+      c.gridx = 0
+      c.gridy = 2
+      c.gridwidth = 2
+      layout(bnNewRound) = c
+    }
+
+    //val flowPanelN = new FlowPanel()
+    val list:List[Label] = Nil
+    val flowPanelS = new FlowPanel () {}
+
     // setze primäres Layout
     contents = new BorderPanel {
       layout(gridBagPanelW) = West
@@ -200,95 +255,31 @@ object BJGuiMain extends SimpleSwingApplication {
       layout(flowPanelS) = South
       layout(gridBagPanelE) = East
     }
-    
-    // fülle untergeordnete Layouts
-    val gridBagPanelE = new GridBagPanel {
-      val c = new Constraints
-      
-      c.gridx = 0
-      c.gridy = 0
-      c.ipadx= 75     
-      layout(bnGiveCard) = c
-      
-      c.gridx = 0
-      c.gridy = 1
-      c.ipadx= 75
-      layout(bnStand) = c
-    }
-    
-    val lblCenterDefault = new Label {
-      icon = new ImageIcon("blackjack.png")
-    }
-    /*val lblCenterWon = new Label {
-      icon = new ImageIcon("winner.jpg")
-    }
-    val lblCenterLost = new Label {
-      icon = new ImageIcon("lost.jpg")
-    }*/
-    
-    val gridBagPanelW = new GridBagPanel {
-      
-      val c = new Constraints
-      
-      c.gridx = 0
-      c.gridy = 0
-      layout(lblStake) = c
-      
-      c.gridx = 1
-      c.gridy = 0
-      c.ipadx = 75
-      layout(txtStake) = c
-      
-      c.gridx = 0
-      c.gridy = 1
-      c.gridwidth = 2
-      layout(bnStart) = c
-      
-      c.gridx = 0
-      c.gridy = 2
-      layout(bnNewRound) = c
-    }
-    
-    //beim Start jeder neuen Runde
-    startNewRound
-    
-    // diese dann später dynmaisch füllen
-    val labelPic1 = new Label {
-      icon = new ImageIcon("diamond_6.png")
-    }
-    val labelPic2 = new Label {
-      icon = new ImageIcon("heart_3.png")
-    }
-    val flowPanelN = new FlowPanel()
-    val flowPanelS = new FlowPanel(labelPic1, labelPic2) 
-  
+
     // setze Listener
     listenTo(bnGiveCard)
     listenTo(bnStand)
-    listenTo(bnStart)
     listenTo(txtStake.keys)
     listenTo(bnNewRound)
-    
+
     // setze reactions 
     reactions += {
       case ButtonClicked(component) if component == bnGiveCard =>
-        // fordere neue Karte von Kontroller an "newCard"
-        // kovertiere Kartenobjekt in GuiKomponente->Bild
-        // adde Gui Komponente zum Panel
-        // flowPanelS.contents += newCard
+        round = round.hit(round.humanRoundPlayer.player)
+        updateCards
       case ButtonClicked(component) if component == bnStand =>
-        // call controller logic to see if user won
-        // if (controller.userWon == true) 
-        lblCenterDefault.icon = new ImageIcon("winner.jpg")
-        // else lblPicCenter.icon = new ImageIcon("lost.jpg")
         bnGiveCard.enabled = false
         bnStand.enabled = false
         bnNewRound.enabled = true
-      case ButtonClicked(component) if component == bnStart =>  
-        bnStart.enabled = false
-        bnGiveCard.enabled = true
-        bnStand.enabled = true
-      case ButtonClicked(component) if component == bnNewRound =>  
+
+        round = round.finish()
+        if (round.humanRoundPlayer.winner) {
+          lblCenterDefault.icon = new ImageIcon("winner.jpg")
+        } else {
+          lblCenterLost.icon = new ImageIcon("lost.jpg")
+        }
+        // show dealer cards
+      case ButtonClicked(component) if component == bnNewRound =>
         startNewRound
       case KeyPressed(_, Key.Enter, _, _) =>
         //def isAllDigits(x: String) = x forall Character.isDigit
@@ -296,22 +287,33 @@ object BJGuiMain extends SimpleSwingApplication {
           Dialog.showMessage(new FlowPanel, "Please use numbers only!")
           txtStake.text = ""
         } else {
-        txtStake.enabled = false
-        bnStart.enabled = true 
+          round = round.bet(round.humanRoundPlayer.player.asInstanceOf[HumanPlayer],(txtStake.text).toInt)
+          txtStake.enabled = false
+          bnGiveCard.enabled = true
+          bnStand.enabled = true
         }
     }
-    
-    
+
+
     def startNewRound = {
       bnGiveCard.enabled = false
       bnStand.enabled = false
       txtStake.enabled = true
       txtStake.text = ""
-      bnStart.enabled = false
       bnNewRound.enabled = false
     }
-    
-  }  
-  
+
+    def updateCards() = {
+      flowPanelN = new FlowPanel()
+
+      val cards:List[Card] = round.getHandOfBank().getVisibleCards()
+
+      for (card<-cards) {
+          val cardComp = card.color + "_" + card.weight.toString
+         // doesnt work ;D new card<->label match :) Name einer Variablen bekommen funz leider nicht...; flowPanelN.contents += cardComp.asInstanceOf[Label]
+      }
+    }
+
+  }
+
 } 
-  

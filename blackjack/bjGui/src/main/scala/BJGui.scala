@@ -274,7 +274,7 @@ object BJGui extends SimpleSwingApplication {
         bnNewRound.enabled = true
 
         round = round.finish()
-        if (round.getWinners.isEmpty) {
+        if (round.humanRoundPlayer.winner) {
           lblCenterDefault.icon = new ImageIcon("winner.jpg")
         } else {
           lblCenterLost.icon = new ImageIcon("lost.jpg")

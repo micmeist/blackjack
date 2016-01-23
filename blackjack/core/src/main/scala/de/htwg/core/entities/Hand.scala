@@ -6,7 +6,7 @@ import play.api.libs.json._
 /**
   * Created by Michael Meister on 20.12.2015.
   */
-abstract class Hand {
+abstract class Hand(protected val isBank: Boolean) {
 
   var cards: List[Card] = Nil
 
@@ -37,7 +37,7 @@ abstract class Hand {
     if (isBust) {
       return false
     }
-    if(hand.isBust){
+    if (hand.isBust) {
       return true
     }
     getSum match {
@@ -59,11 +59,9 @@ abstract class Hand {
     */
   def visibleCards(): List[Card]
 
-  protected def isBank(): Boolean
-
 }
 
-class HandBank extends Hand {
+class HandBank extends Hand(true) {
 
   /**
     * Only the second card of banks hand is visible
@@ -73,16 +71,14 @@ class HandBank extends Hand {
     List(cards.head, new Card("unknown", "unknown", 0))
   }
 
-  protected override def isBank() = true
 }
 
-class HandHumanPlayer extends Hand {
+class HandHumanPlayer extends Hand(false) {
 
   override def visibleCards(): List[Card] = {
     allCards
   }
 
-  protected override def isBank() = false
 }
 
 object Hand {

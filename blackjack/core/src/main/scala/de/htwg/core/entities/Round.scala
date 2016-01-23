@@ -6,7 +6,7 @@ import play.api.libs.json._
 /**
   * Created by Michael Meister on 19.12.2015.
   */
-case class Round(game: Game, bankRoundPlayer: RoundPlayer, humanRoundPlayer: RoundPlayer, finished: Boolean) {
+case class Round(game: Game, bankRoundPlayer: RoundPlayer, humanRoundPlayer: RoundPlayer, finished: Boolean = false) {
 
   @deprecated
   def getPlayers: List[Player] = {
@@ -31,19 +31,13 @@ case class Round(game: Game, bankRoundPlayer: RoundPlayer, humanRoundPlayer: Rou
   }
 
   @deprecated
-  private def getBank(): BankPlayer = {
-    game.bank.asInstanceOf[BankPlayer]
-  }
-
-  @deprecated
   def getBetOfPlayer(player: HumanPlayer): Bet = {
     humanRoundPlayer.bet
   }
 
   //TODO: Test für Fall, dass amount höher als verfügbares Geld
   private[core] def bet(amount: Int): Round = {
-    humanRoundPlayer.bet(amount)
-    this
+    Round(game,bankRoundPlayer,humanRoundPlayer.bet(amount))
   }
 
   /**
@@ -67,7 +61,7 @@ case class Round(game: Game, bankRoundPlayer: RoundPlayer, humanRoundPlayer: Rou
     */
   def finish(): Round = {
     if (!finished) {
-      val cash = humanRoundPlayer.bet.getAmount()
+      val cash = humanRoundPlayer.bet.amount
       if (humanRoundPlayer.hand isWinnerComparedTo bankRoundPlayer.hand) {
         val human = RoundPlayer(humanRoundPlayer.player + cash * 2, humanRoundPlayer.hand, humanRoundPlayer.bet, true)
         val bank = RoundPlayer(bankRoundPlayer.player - cash * 2, bankRoundPlayer.hand, bankRoundPlayer.bet)

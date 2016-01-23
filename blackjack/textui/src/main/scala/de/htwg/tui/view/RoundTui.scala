@@ -26,7 +26,7 @@ object RoundTui extends Tui {
     for (roundPlayer <- round.getRoundPlayers) {
       print(roundPlayer.player.name + " | " + roundPlayer.hand.allCards())
       if (roundPlayer.player.isInstanceOf[HumanPlayer]) {
-        print(" | " + roundPlayer.bet.getAmount())
+        print(" | " + roundPlayer.bet.amount)
       }
       println()
     }

@@ -17,8 +17,8 @@ class RoundTest extends FlatSpec with Matchers with BeforeAndAfter {
   }
 
   "In a new round every Player" should "have two cards" in {
-    for (player <- round.getRoundPlayers) {
-      if (player.hand.cards.length != 2) {
+    for (roundPlayer <- round.getRoundPlayers) {
+      if (roundPlayer.hand.cards.length != 2) {
         fail()
       }
     }
@@ -59,8 +59,24 @@ class RoundTest extends FlatSpec with Matchers with BeforeAndAfter {
   }
 
   "When a human player bets" should "his bet be 10 if he bets 10" in {
-    GameCoreController.bet(round, 10)
-    round.humanRoundPlayer.bet.getAmount() should be(10)
+    assert(round.humanRoundPlayer.player.money == 1000)
+    round = GameCoreController.bet(round, 10)
+    round.humanRoundPlayer.bet.amount should be(10)
+    round.humanRoundPlayer.player.money should be(990)
+  }
+
+  it should "his bet be 1000 if he bets 1000 and owns 1000" in {
+    assert(round.humanRoundPlayer.player.money == 1000)
+    round = GameCoreController.bet(round, 1000)
+    round.humanRoundPlayer.bet.amount should be(1000)
+    round.humanRoundPlayer.player.money should be(0)
+  }
+
+  it should "his bet be 1000 if he bets 1001 and owns 1000" in {
+    assert(round.humanRoundPlayer.player.money == 1000)
+    round = GameCoreController.bet(round, 1001)
+    round.humanRoundPlayer.bet.amount should be(1000)
+    round.humanRoundPlayer.player.money should be(0)
   }
 
 }

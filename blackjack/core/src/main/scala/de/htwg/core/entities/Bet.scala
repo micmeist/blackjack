@@ -5,14 +5,10 @@ import play.api.libs.json.Json
 /**
   * Created by Michael Meister on 09.01.2016.
   */
-case class Bet(private var amount: Int) {
+case class Bet(amount: Int) {
 
-  def +(amount: Int): Unit = {
-    this.amount += amount
-  }
-
-  def getAmount(): Int = {
-    amount
+  def +(amount: Int): Bet = {
+    Bet(this.amount + amount)
   }
 }
 

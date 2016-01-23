@@ -11,15 +11,14 @@ case class RoundPlayer(player: Player, hand: Hand, bet: Bet, winner: Boolean = f
     hand.getSum < RoundPlayer.hitBorder
   }
 
-  private[entities] def bet(amount: Int): Unit = {
+  private[entities] def bet(amount: Int): RoundPlayer = {
     var possibleAmount: Int = 0
     if (amount > player.money) {
       possibleAmount = player.money
     } else {
       possibleAmount = amount
     }
-    bet + possibleAmount
-    player - possibleAmount
+    RoundPlayer(player - possibleAmount, hand, bet + possibleAmount)
   }
 
   private[entities] def hit(card: Card): Unit = {

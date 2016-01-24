@@ -8,12 +8,15 @@ import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 class HandTest extends FlatSpec with Matchers with BeforeAndAfter {
 
   var hand: Hand = null
+  var isBank: Boolean = false
 
   def executeTest(test: () => Unit): Unit = {
     hand = new HandHumanPlayer
+    isBank = false
     test()
 
     hand = new HandBank
+    isBank = true
     test()
   }
 
@@ -32,88 +35,93 @@ class HandTest extends FlatSpec with Matchers with BeforeAndAfter {
 
   "The hand 10,10" should "not be too high" in {
     executeTest(() => {
-      hand.cards = List(TestUtilites.getTestCard(10), TestUtilites.getTestCard(10))
+      hand = Hand(List(TestUtilites.getTestCard(10), TestUtilites.getTestCard(10)), isBank)
       hand.isBust should be(false)
     })
   }
 
   "The hand 10,10,1" should "not be too high" in {
     executeTest(() => {
-      hand.cards = List(TestUtilites.getTestCard(10), TestUtilites.getTestCard(10), TestUtilites.getTestCard(1))
+      hand = Hand(List(TestUtilites.getTestCard(10), TestUtilites.getTestCard(10), TestUtilites.getTestCard(1)), isBank)
       hand.isBust should be(false)
     })
   }
 
   "The hand 10,10,2" should "be too high" in {
     executeTest(() => {
-      hand.cards = List(TestUtilites.getTestCard(10), TestUtilites.getTestCard(10), TestUtilites.getTestCard(2))
+      hand = Hand(List(TestUtilites.getTestCard(10), TestUtilites.getTestCard(10), TestUtilites.getTestCard(2)), isBank)
       hand.isBust should be(true)
     })
   }
 
   "The sum of Players hand" should "be 0 for empty Hand" in {
-    val hand: Hand = new HandHumanPlayer
-    hand.cards = List()
-    hand.getSum should be(0)
+    executeTest(() => {
+      hand = Hand(List(), isBank)
+      hand.getSum should be(0)
+    })
   }
 
   it should "be 20 for K,K" in {
-    val hand: Hand = new HandHumanPlayer
-    hand.cards = List(new Card("Kreuz", "K", 10), new Card("Pik", "K", 10))
-    hand.getSum should be(20)
+    executeTest(() => {
+      hand = Hand(List(new Card("Kreuz", "K", 10), new Card("Pik", "K", 10)), isBank)
+      hand.getSum should be(20)
+    })
   }
 
   it should "be 4 for 2,2" in {
-    val hand: Hand = new HandHumanPlayer
-    hand.cards = List(new Card("Kreuz", "2", 2), new Card("Pik", "2", 2))
-    hand.getSum should be(4)
+    executeTest(() => {
+      hand = Hand(List(new Card("Kreuz", "2", 2), new Card("Pik", "2", 2)), isBank)
+      hand.getSum should be(4)
+    })
   }
 
   it should "be 14 for 2,2,10" in {
-    val hand: Hand = new HandHumanPlayer
-    hand.cards = List(new Card("Kreuz", "2", 2), new Card("Pik", "2", 2), new Card("Pik", "K", 10))
-    hand.getSum should be(14)
+    executeTest(() => {
+      hand = Hand(List(new Card("Kreuz", "2", 2), new Card("Pik", "2", 2), new Card("Pik", "K", 10)), isBank)
+      hand.getSum should be(14)
+    })
   }
 
   it should "be 2 for the single Card 2" in {
-    val hand: Hand = new HandHumanPlayer
-    hand.cards = List(new Card("Kreuz", "2", 2))
-    hand.getSum should be(2)
+    executeTest(() => {
+      hand = Hand(List(new Card("Kreuz", "2", 2)), isBank)
+      hand.getSum should be(2)
+    })
   }
 
   "A Players hand" should "be fully visible" in {
     val cardOne = new Card("Kreuz", "K", 10)
     val cardTwo = new Card("Pik", "K", 10)
-    val hand: Hand = new HandHumanPlayer
-    hand.addCardToHand(cardOne)
-    hand.addCardToHand(cardTwo)
+    var hand: Hand = new HandHumanPlayer
+    hand = hand.addCardToHand(cardOne)
+    hand = hand.addCardToHand(cardTwo)
     hand.visibleCards() should be(List(cardTwo, cardOne))
   }
   it should "have the second card on top" in {
     val cardOne = new Card("Kreuz", "K", 10)
     val cardTwo = new Card("Pik", "K", 10)
-    val hand: Hand = new HandHumanPlayer
-    hand.addCardToHand(cardOne)
-    hand.addCardToHand(cardTwo)
+    var hand: Hand = new HandHumanPlayer
+    hand = hand.addCardToHand(cardOne)
+    hand = hand.addCardToHand(cardTwo)
     hand.visibleCards().head should be(cardTwo)
   }
 
   "A Banks hand" should "have the second card on top" in {
     val cardOne = new Card("Kreuz", "K", 10)
     val cardTwo = new Card("Pik", "K", 10)
-    val hand: Hand = new HandBank
-    hand.addCardToHand(cardOne)
-    hand.addCardToHand(cardTwo)
+    var hand: Hand = new HandBank
+    hand = hand.addCardToHand(cardOne)
+    hand = hand.addCardToHand(cardTwo)
     hand.visibleCards().head should be(cardTwo)
   }
 
   it should "not be fully visible" in {
     val cardOne = new Card("Kreuz", "K", 10)
     val cardTwo = new Card("Pik", "K", 10)
-    val hand: Hand = new HandBank
-    hand.addCardToHand(cardOne)
-    hand.addCardToHand(cardTwo)
-    hand.visibleCards()(1) should not be (cardOne)
+    var hand: Hand = new HandBank
+    hand = hand.addCardToHand(cardOne)
+    hand = hand.addCardToHand(cardTwo)
+    hand.visibleCards()(1) should not be cardOne
     hand.visibleCards().head should be(cardTwo)
   }
 

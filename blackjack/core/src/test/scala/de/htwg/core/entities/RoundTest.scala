@@ -18,7 +18,7 @@ class RoundTest extends FlatSpec with Matchers with BeforeAndAfter {
 
   "In a new round every Player" should "have two cards" in {
     for (roundPlayer <- round.getRoundPlayers) {
-      if (roundPlayer.hand.cards.length != 2) {
+      if (roundPlayer.hand.allCards().length != 2) {
         fail()
       }
     }
@@ -29,15 +29,17 @@ class RoundTest extends FlatSpec with Matchers with BeforeAndAfter {
     val card = game.deck(1)
     round = Round.createRound(game)
     assert(round.getRoundPlayers.length == 2)
-    round.bankRoundPlayer.hand.cards(1) should be(card)
+    assert(round.getRoundPlayers(1).player.isInstanceOf[BankPlayer])
+    round.bankRoundPlayer.hand.allCards().last should be(card)
   }
 
   it should "the first Player have the first card from the deck as first card" in {
     game = Game.createGame()
-    val card = game.deck(0)
+    val card = game.deck.head
     round = Round.createRound(game)
     assert(round.getRoundPlayers.length == 2)
-    round.humanRoundPlayer.hand.cards(1) should be(card)
+    assert(round.getRoundPlayers.head.player.isInstanceOf[HumanPlayer])
+    round.humanRoundPlayer.hand.allCards()(1) should be(card)
   }
 
   it should "the first Player have the third card from the deck as second card" in {
@@ -45,7 +47,8 @@ class RoundTest extends FlatSpec with Matchers with BeforeAndAfter {
     val card = game.deck(2)
     round = Round.createRound(game)
     assert(round.getRoundPlayers.length == 2)
-    round.humanRoundPlayer.hand.cards(0) should be(card)
+    assert(round.getRoundPlayers.head.player.isInstanceOf[HumanPlayer])
+    round.humanRoundPlayer.hand.allCards().head should be(card)
   }
 
   "In a Round where Players hand is higher than banks hand" should "player be winner" in {

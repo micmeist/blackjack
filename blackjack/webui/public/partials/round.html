@@ -36,11 +36,11 @@
 <div class="row">
     <form class="form-inline" ng-submit="bet()" ng-hide="betsFinished">
         <div class="form-group">
-            <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+            <label class="sr-only" for="amountInput">Amount (in dollars)</label>
             <div class="input-group">
                 <div class="input-group-addon">$</div>
-                <input required ng-model="betAmount" type="number" class="form-control" id="exampleInputAmount"
-                       placeholder="Amount">
+                <input required ng-model="betAmount" type="number" class="form-control" id="amountInput"
+                       placeholder="Amount" ng-disabled="betsFinished">
             </div>
         </div>
         <button type="submit" class="btn btn-default">Bet</button>

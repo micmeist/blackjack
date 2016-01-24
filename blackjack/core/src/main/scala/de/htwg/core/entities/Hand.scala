@@ -6,12 +6,10 @@ import play.api.libs.json._
 /**
   * Created by Michael Meister on 20.12.2015.
   */
-abstract class Hand(protected val isBank: Boolean) {
+abstract class Hand(protected val isBank: Boolean, protected val cards: List[Card]) {
 
-  var cards: List[Card] = Nil
-
-  private[entities] final def addCardToHand(card: Card): Unit = {
-    cards = card :: cards
+  private[entities] final def addCardToHand(card: Card): Hand = {
+    Hand.apply(card :: cards, isBank)
   }
 
   /**
@@ -28,7 +26,6 @@ abstract class Hand(protected val isBank: Boolean) {
 
   final def getSum: Int = {
     var sum = 0
-    //TODO: Do this using a scala specific nice way?
     cards.foreach(card => sum += card.getWeight)
     sum
   }
@@ -61,7 +58,7 @@ abstract class Hand(protected val isBank: Boolean) {
 
 }
 
-class HandBank extends Hand(true) {
+class HandBank(cards: List[Card] = Nil) extends Hand(true, cards) {
 
   /**
     * Only the second card of banks hand is visible
@@ -73,7 +70,7 @@ class HandBank extends Hand(true) {
 
 }
 
-class HandHumanPlayer extends Hand(false) {
+class HandHumanPlayer(cards: List[Card] = Nil) extends Hand(false, cards) {
 
   override def visibleCards(): List[Card] = {
     allCards
@@ -97,13 +94,10 @@ object Hand {
     ) (Hand.apply _)
 
   def apply(cards: List[Card], isBank: Boolean): Hand = {
-    var hand: Hand = null
     if (isBank) {
-      hand = new HandBank
+      new HandBank(cards)
     } else {
-      hand = new HandHumanPlayer
+      new HandHumanPlayer(cards)
     }
-    hand.cards = cards
-    hand
   }
 }

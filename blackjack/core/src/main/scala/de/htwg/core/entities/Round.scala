@@ -3,6 +3,8 @@ package de.htwg.core.entities
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
+import scala.collection.mutable
+
 /**
   * Created by Michael Meister on 19.12.2015.
   */
@@ -37,7 +39,7 @@ case class Round(game: Game, bankRoundPlayer: RoundPlayer, humanRoundPlayer: Rou
 
   //TODO: Test für Fall, dass amount höher als verfügbares Geld
   private[core] def bet(amount: Int): Round = {
-    Round(game,bankRoundPlayer,humanRoundPlayer.bet(amount))
+    Round(game, bankRoundPlayer, humanRoundPlayer.bet(amount))
   }
 
   /**
@@ -45,15 +47,15 @@ case class Round(game: Game, bankRoundPlayer: RoundPlayer, humanRoundPlayer: Rou
     * Adds another card from the game deck to players hand
     */
   private[core] def hit(): Round = {
-    humanRoundPlayer.hit(game.getNextCardFromDeck)
-    this
+    Round(game, bankRoundPlayer, humanRoundPlayer.hit(game.getNextCardFromDeck))
   }
 
   private[core] def hitBank(): Round = {
-    while (bankRoundPlayer.hasToHit) {
-      bankRoundPlayer.hit(game.getNextCardFromDeck)
+    var resultBankRoundPlayer: RoundPlayer = bankRoundPlayer
+    while (resultBankRoundPlayer.hasToHit) {
+      resultBankRoundPlayer = resultBankRoundPlayer.hit(game.getNextCardFromDeck)
     }
-    this
+    Round(game, resultBankRoundPlayer, humanRoundPlayer)
   }
 
   /**
@@ -93,27 +95,31 @@ case class Round(game: Game, bankRoundPlayer: RoundPlayer, humanRoundPlayer: Rou
 object Round {
 
   def createRound(game: Game): Round = {
-    val round = new Round(game, createRoundPlayer(game.bank), createRoundPlayer(game.player), false)
-    deal(game, round)
-    round
+    val map: mutable.Map[Player, Hand] = deal(game, game.getPlayers)
+    Round(game, createRoundPlayer(game.bank, map.get(game.bank).get), createRoundPlayer(game.player, map.get(game.player).get), false)
   }
 
-  private def deal(game: Game, round: Round): Unit = {
-    for (x <- 0 to 1) {
-      for (player <- round.getRoundPlayers) {
-        player.hand.addCardToHand(game.getNextCardFromDeck)
-      }
+  private def deal(game: Game, players: List[Player]): mutable.Map[Player, Hand] = {
+    val map: mutable.Map[Player, Hand] = mutable.Map()
+    players.foreach(player => map.put(player, createHand(player)))
+
+    for (x <- 0 to 1; player <- players) {
+      val hand: Hand = map.get(player).get
+      map.put(player, hand.addCardToHand(game.getNextCardFromDeck))
     }
+    map
   }
 
-  private def createRoundPlayer(player: Player): RoundPlayer = {
+  private def createRoundPlayer(player: Player, hand: Hand): RoundPlayer = {
+    new RoundPlayer(player, hand, new Bet(0))
+  }
+
+  private def createHand(player: Player): Hand = {
     var hand: Hand = null
     player match {
-      case a: BankPlayer => hand = new HandBank
-      case b: HumanPlayer => hand = new HandHumanPlayer
+      case a: BankPlayer => new HandBank
+      case b: HumanPlayer => new HandHumanPlayer
     }
-    new RoundPlayer(player, hand, new Bet(0))
-
   }
 
   implicit val roundWrites = new Writes[Round] {

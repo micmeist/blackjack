@@ -10,18 +10,18 @@ object TestUtilites {
 
   def getTestHandBank(cardWeights: Array[Int]): HandBank = {
     val bankHand: HandBank = new HandBank
-    addTestCardsToHand(cardWeights, bankHand)
-    bankHand
+    addTestCardsToHand(cardWeights, bankHand).asInstanceOf[HandBank]
   }
 
   def getTestHandHumanPlayer(cardWeights: Array[Int]): HandHumanPlayer = {
-    val playerHand : HandHumanPlayer = new HandHumanPlayer
-    addTestCardsToHand(cardWeights, playerHand)
-    playerHand
+    val playerHand: HandHumanPlayer = new HandHumanPlayer
+    addTestCardsToHand(cardWeights, playerHand).asInstanceOf[HandHumanPlayer]
   }
 
-  def addTestCardsToHand(cardWeights: Array[Int], hand: Hand): Unit ={
-    cardWeights.foreach(weight => hand.addCardToHand(getTestCard(weight)))
+  def addTestCardsToHand(cardWeights: Array[Int], hand: Hand): Hand = {
+    var resultHand: Hand = hand
+    cardWeights.foreach(weight => resultHand = resultHand.addCardToHand(getTestCard(weight)))
+    resultHand
   }
 
 }

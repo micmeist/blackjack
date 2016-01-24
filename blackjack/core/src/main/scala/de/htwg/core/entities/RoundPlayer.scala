@@ -21,8 +21,8 @@ case class RoundPlayer(player: Player, hand: Hand, bet: Bet, winner: Boolean = f
     RoundPlayer(player - possibleAmount, hand, bet + possibleAmount)
   }
 
-  private[entities] def hit(card: Card): Unit = {
-    hand.addCardToHand(card)
+  private[entities] def hit(card: Card): RoundPlayer = {
+    RoundPlayer(player,hand.addCardToHand(card),bet, winner)
   }
 
 }

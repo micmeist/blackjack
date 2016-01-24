@@ -10,31 +10,8 @@ import scala.collection.mutable
   */
 case class Round(game: Game, bankRoundPlayer: RoundPlayer, humanRoundPlayer: RoundPlayer, finished: Boolean = false) {
 
-  @deprecated
-  def getPlayers: List[Player] = {
-    game.getPlayers
-  }
-
   def getRoundPlayers: List[RoundPlayer] = {
     List(humanRoundPlayer, bankRoundPlayer)
-  }
-
-  @deprecated
-  def getHandOfPlayer(player: Player): Hand = {
-    player match {
-      case a: BankPlayer => bankRoundPlayer.hand
-      case b: HumanPlayer => humanRoundPlayer.hand
-    }
-  }
-
-  @deprecated
-  def getHandOfBank(): HandBank = {
-    bankRoundPlayer.hand.asInstanceOf[HandBank]
-  }
-
-  @deprecated
-  def getBetOfPlayer(player: HumanPlayer): Bet = {
-    humanRoundPlayer.bet
   }
 
   //TODO: Test für Fall, dass amount höher als verfügbares Geld
@@ -74,19 +51,6 @@ case class Round(game: Game, bankRoundPlayer: RoundPlayer, humanRoundPlayer: Rou
       }
     }
     Round(game, bankRoundPlayer, humanRoundPlayer, true)
-  }
-
-  /**
-    * @return the list of players who have an higher hand than the bank
-    */
-  @deprecated
-  def getWinners: List[Player] = {
-    val banksHand: Hand = bankRoundPlayer.hand
-    if (humanRoundPlayer.hand isWinnerComparedTo banksHand) {
-      List(humanRoundPlayer.player)
-    } else {
-      List()
-    }
   }
 
 

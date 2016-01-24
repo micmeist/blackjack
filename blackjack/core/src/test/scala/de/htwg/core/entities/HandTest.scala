@@ -161,9 +161,9 @@ class HandTest extends FlatSpec with Matchers with BeforeAndAfter {
     playerHand isWinnerComparedTo bankHand should be(true)
   }
 
-  it should "not be winner when its sum is 10" in {
+  it should "not be winner when its sum is 17" in {
     val bankHand: HandBank = TestUtilites.getTestHandBank(Array(10, 9))
-    val playerHand: HandHumanPlayer = TestUtilites.getTestHandHumanPlayer(Array(10))
+    val playerHand: HandHumanPlayer = TestUtilites.getTestHandHumanPlayer(Array(10, 7))
     playerHand isWinnerComparedTo bankHand should be(false)
   }
 

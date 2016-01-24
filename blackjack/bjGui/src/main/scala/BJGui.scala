@@ -10,173 +10,13 @@ import de.htwg.core.entities._
 
 object BJGui extends SimpleSwingApplication {
 
-  // globale Variablen?
-  var round = GameCoreController.startNewRound(GameCoreController.startNewGame)
-  var flowPanelN = new FlowPanel()
-
   def top = new MainFrame {
+    val game = GameCoreController.startNewGame
+    var round = GameCoreController.startNewRound(game)
 
     title = "Blackjack"
-
-    // alle Kartenbilder als Labelicons
-    // labels erst erstellen wenn Karte benötigt über String+String+".png"
-    // + über getResource()
-    val spade_2  = new Label {
-      icon = new ImageIcon("spade_2.png")
-    }
-    val spade_3  = new Label {
-      icon = new ImageIcon("spade_3.png")
-    }
-    val spade_4  = new Label {
-      icon = new ImageIcon("spade_4.png")
-    }
-    val spade_5  = new Label {
-      icon = new ImageIcon("spade_5.png")
-    }
-    val spade_6  = new Label {
-      icon = new ImageIcon("spade_6.png")
-    }
-    val spade_7  = new Label {
-      icon = new ImageIcon("spade_7.png")
-    }
-    val spade_8  = new Label {
-      icon = new ImageIcon("spade_8.png")
-    }
-    val spade_9  = new Label {
-      icon = new ImageIcon("spade_9.png")
-    }
-    val spade_10  = new Label {
-      icon = new ImageIcon("spade_10.png")
-    }
-    val spade_ace  = new Label {
-      icon = new ImageIcon("spade_ace.png")
-    }
-    val spade_jack  = new Label {
-      icon = new ImageIcon("spade_jack.png")
-    }
-    val spade_king  = new Label {
-      icon = new ImageIcon("spade_king.png")
-    }
-    val spade_queen  = new Label {
-      icon = new ImageIcon("spade_queen.png")
-    }
-    val clubs_2  = new Label {
-      icon = new ImageIcon("clubs_2.png")
-    }
-    val clubs_3  = new Label {
-      icon = new ImageIcon("clubs_3.png")
-    }
-    val clubs_4  = new Label {
-      icon = new ImageIcon("clubs_4.png")
-    }
-    val clubs_5  = new Label {
-      icon = new ImageIcon("clubs_5.png")
-    }
-    val clubs_6  = new Label {
-      icon = new ImageIcon("clubs_6.png")
-    }
-    val clubs_7  = new Label {
-      icon = new ImageIcon("clubs_7.png")
-    }
-    val clubs_8  = new Label {
-      icon = new ImageIcon("clubs_8.png")
-    }
-    val clubs_9  = new Label {
-      icon = new ImageIcon("clubs_9.png")
-    }
-    val clubs_10  = new Label {
-      icon = new ImageIcon("clubs_10.png")
-    }
-    val clubs_ace  = new Label {
-      icon = new ImageIcon("clubs_ace.png")
-    }
-    val clubs_jack  = new Label {
-      icon = new ImageIcon("clubs_jack.png")
-    }
-    val clubs_king  = new Label {
-      icon = new ImageIcon("clubs_king.png")
-    }
-    val clubs_queen  = new Label {
-      icon = new ImageIcon("clubs_queen.png")
-    }
-    val heart_2  = new Label {
-      icon = new ImageIcon("heart_2.png")
-    }
-    val heart_3  = new Label {
-      icon = new ImageIcon("heart_3.png")
-    }
-    val heart_4  = new Label {
-      icon = new ImageIcon("heart_4.png")
-    }
-    val heart_5  = new Label {
-      icon = new ImageIcon("heart_5.png")
-    }
-    val heart_6  = new Label {
-      icon = new ImageIcon("heart_6.png")
-    }
-    val heart_7  = new Label {
-      icon = new ImageIcon("heart_7.png")
-    }
-    val heart_8  = new Label {
-      icon = new ImageIcon("heart_8.png")
-    }
-    val heart_9  = new Label {
-      icon = new ImageIcon("heart_9.png")
-    }
-    val heart_10  = new Label {
-      icon = new ImageIcon("heart_10.png")
-    }
-    val heart_ace  = new Label {
-      icon = new ImageIcon("heart_ace.png")
-    }
-    val heart_jack  = new Label {
-      icon = new ImageIcon("heart_jack.png")
-    }
-    val heart_king  = new Label {
-      icon = new ImageIcon("heart_king.png")
-    }
-    val heart_queen  = new Label {
-      icon = new ImageIcon("heart_queen.png")
-    }
-    val diamond_2  = new Label {
-      icon = new ImageIcon("diamond_2.png")
-    }
-    val diamond_3  = new Label {
-      icon = new ImageIcon("diamond_3.png")
-    }
-    val diamond_4  = new Label {
-      icon = new ImageIcon("diamond_4.png")
-    }
-    val diamond_5  = new Label {
-      icon = new ImageIcon("diamond_5.png")
-    }
-    val diamond_6  = new Label {
-      icon = new ImageIcon("diamond_6.png")
-    }
-    val diamond_7  = new Label {
-      icon = new ImageIcon("diamond_7.png")
-    }
-    val diamond_8  = new Label {
-      icon = new ImageIcon("diamond_8.png")
-    }
-    val diamond_9  = new Label {
-      icon = new ImageIcon("diamond_9.png")
-    }
-    val diamond_10  = new Label {
-      icon = new ImageIcon("diamond_10.png")
-    }
-    val diamond_ace  = new Label {
-      icon = new ImageIcon("diamond_ace.png")
-    }
-    val diamond_jack  = new Label {
-      icon = new ImageIcon("diamond_jack.png")
-    }
-    val diamond_king  = new Label {
-      icon = new ImageIcon("diamond_king.png")
-    }
-    val diamond_queen  = new Label {
-      icon = new ImageIcon("diamond_queen.png")
-    }
+    // TODO in future: relative size to screen size
+    preferredSize = new Dimension(1000,768)
 
     // Referenzen zu restlichen GUI Komponenten
     val bnGiveCard = new Button {
@@ -186,6 +26,7 @@ object BJGui extends SimpleSwingApplication {
     val bnStand = new Button {
       text = "Stand"
       enabled = false
+      // TODO styling background = java.awt.Color.magenta
     }
     val lblStake = new Label {
       text = "Stake in $: "
@@ -195,7 +36,12 @@ object BJGui extends SimpleSwingApplication {
     val bnNewRound = new Button {
       text = "New Round!"
     }
-
+    val lblMoney = new Label {
+      text = "Money: " + round.humanRoundPlayer.player.money.toString
+    }
+    val lblCenterDefault = new Label {
+      icon = new ImageIcon(getClass.getResource("blackjack.png"))
+    }
     // Methode um Referenz auf ein EditText zu bekommen
     def txtField = new TextField {
       horizontalAlignment = Alignment.Left
@@ -216,16 +62,6 @@ object BJGui extends SimpleSwingApplication {
       layout(bnStand) = c
     }
 
-    val lblCenterDefault = new Label {
-      icon = new ImageIcon(getClass.getResource("blackjack.png"))
-    }
-    val lblCenterWon = new Label {
-      icon = new ImageIcon("winner.jpg")
-    }
-    val lblCenterLost = new Label {
-      icon = new ImageIcon("lost.jpg")
-    }
-
     val gridBagPanelW = new GridBagPanel {
 
       val c = new Constraints
@@ -243,11 +79,14 @@ object BJGui extends SimpleSwingApplication {
       c.gridy = 2
       c.gridwidth = 2
       layout(bnNewRound) = c
+
+      c.gridx = 0
+      c.gridy = 3
+      layout(lblMoney) = c
     }
 
-    //val flowPanelN = new FlowPanel()
-    val flowPanelS = new FlowPanel () {}
-
+    val flowPanelS = new FlowPanel
+    val flowPanelN = new FlowPanel
     // setze primäres Layout
     contents = new BorderPanel {
       layout(gridBagPanelW) = West
@@ -268,20 +107,29 @@ object BJGui extends SimpleSwingApplication {
       case ButtonClicked(component) if component == bnGiveCard =>
         round = GameCoreController.hit(round)
         updateCards
+
       case ButtonClicked(component) if component == bnStand =>
         bnGiveCard.enabled = false
         bnStand.enabled = false
         bnNewRound.enabled = true
 
-        round = round.finish()
+        // ermittle den Gewinner und verändere dessen Geld + verändere Center Bild
+        // TODO show dealer cards
+        round = GameCoreController.finish(round)
         if (round.humanRoundPlayer.winner) {
-          lblCenterDefault.icon = new ImageIcon("winner.jpg")
+          lblCenterDefault.icon = new ImageIcon(getClass.getResource("winner.jpg"))
         } else {
-          lblCenterLost.icon = new ImageIcon("lost.jpg")
+          lblCenterDefault.icon = new ImageIcon(getClass.getResource("lost.jpg"))
         }
-        // show dealer cards
+        // TODO get right amount of money after round
+        lblMoney.text = "Money: " + round.humanRoundPlayer.player.money.toString
+
+        // starte neue Runde
+        round = GameCoreController.startNewRound(game)
+
       case ButtonClicked(component) if component == bnNewRound =>
         startNewRound
+
       case KeyPressed(_, Key.Enter, _, _) =>
         if(!(txtStake.text.forall { _.isDigit })) {
           Dialog.showMessage(new FlowPanel, "Please use numbers only!")
@@ -291,32 +139,73 @@ object BJGui extends SimpleSwingApplication {
           txtStake.enabled = false
           bnGiveCard.enabled = true
           bnStand.enabled = true
-          // + Gewinn anzeigen evtl
         }
     }
 
-
     def startNewRound = {
+      // initialisiere Spielfeld
+      lblCenterDefault.icon = new ImageIcon(getClass.getResource("blackjack.png"))
       bnGiveCard.enabled = false
       bnStand.enabled = false
       txtStake.enabled = true
       txtStake.text = ""
       bnNewRound.enabled = false
+      updateCards
     }
 
-    def updateCards() = {
-      flowPanelN = new FlowPanel()
+    def updateCards = {
+      def getScaledImageLabel(card: Card):Label = {
 
-      val cards:List[Card] = round.bankRoundPlayer.hand.visibleCards
+        def getColor(color:String):String = color match {
+          case "Kreuz" => "clubs"
+          case "Pik" => "spade"
+          case "Herz" => "heart"
+          case "Karo" => "diamond"
+          case "unknown" => "back"
+        }
+
+        def getNumber(number:String): String = number match {
+          case "A" => "ace"
+          case "J" => "jack"
+          case "Q" => "queen"
+          case "K" => "king"
+          case "unknown" => ""
+          case _ => number
+        }
+
+        // Image Größe ändern und als Icon setzen
+        val imageFilePath:String = getColor(card.color) + "_" + getNumber(card.number) + ".png"
+        val ic = new ImageIcon(getClass.getResource(imageFilePath))
+        // TODO in future: relative size to screen size
+        val img:Image = ic.getImage.getScaledInstance(150,-1,0)
+        ic.setImage(img)
+
+        val label = new Label {
+          icon = ic
+        }
+
+        return label
+      }
+
+      // fülle den Spielerpanel mit seinen Karten
+      val cards:List[Card] = round.humanRoundPlayer.hand.visibleCards
+      flowPanelS.contents.clear()
 
       for (card<-cards) {
-          val cardComp = card.color + "_" + card.weight.toString
-
+        flowPanelS.contents += getScaledImageLabel(card)
       }
+      flowPanelS.revalidate()
+      flowPanelS.repaint()
+
+      // fülle den Dealerpanel mit seinen Karten
+      val cardsDealer:List[Card] = round.bankRoundPlayer.hand.visibleCards
+      flowPanelN.contents.clear()
+
+      for (card<-cardsDealer) {
+        flowPanelN.contents += getScaledImageLabel(card)
+      }
+      flowPanelN.revalidate()
+      flowPanelN.repaint()
     }
-
-
-
   }
-
 } 

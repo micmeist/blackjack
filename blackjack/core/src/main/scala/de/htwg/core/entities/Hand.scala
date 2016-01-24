@@ -26,7 +26,7 @@ abstract class Hand(protected val isBank: Boolean, protected val cards: List[Car
 
   final def getSum: Int = {
     var sum = 0
-    cards.foreach(card => sum += card.getWeight)
+    cards.foreach(card => sum += card.weight)
     sum
   }
 

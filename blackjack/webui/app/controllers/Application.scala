@@ -19,8 +19,7 @@ object Application extends Controller {
   def newRound = Action(parse.json) { request =>
     request.body.validate[Game].map {
       case (game: Game) =>
-        val round = GameCoreController.startNewRound(game)
-        Ok(Json.stringify(Json.toJson(round)))
+        Ok(Json.stringify(Json.toJson(GameCoreController.startNewRound(game))))
     }.recoverTotal {
       e => BadRequest("Detected error:" + JsError.toFlatForm(e))
     }

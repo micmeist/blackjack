@@ -79,7 +79,6 @@ object Round {
   }
 
   private def createHand(player: Player): Hand = {
-    var hand: Hand = null
     player match {
       case a: BankPlayer => new HandBank
       case b: HumanPlayer => new HandHumanPlayer

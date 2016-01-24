@@ -23,7 +23,7 @@ abstract class Player(val name: String, val money: Int) {
     * @param amount the amount to subtract
     */
   private[entities] def -(amount: Int): Player = {
-    Player.apply(money - amount, this.name)
+    Player(money - amount, this.name)
   }
 }
 

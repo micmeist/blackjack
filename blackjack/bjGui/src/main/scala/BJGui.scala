@@ -11,48 +11,49 @@ import de.htwg.core.entities._
 object BJGui extends SimpleSwingApplication {
 
   def top = new MainFrame {
-    var round = GameCoreController.startNewRound(GameCoreController.startNewGame)
+    // round ist einzige 'var' in GUI
+    private var round = GameCoreController.startNewRound(GameCoreController.startNewGame)
 
     title = "Blackjack"
     // TODO in future: relative size to screen size
     preferredSize = new Dimension(1000,768)
 
     // Referenzen zu restlichen GUI Komponenten
-    val bnGiveCard = new Button {
+    private val bnGiveCard = new Button {
       text = "Hit me"
       enabled = false
       background = java.awt.Color.darkGray
       foreground = java.awt.Color.white
     }
-    val bnStand = new Button {
+    private val bnStand = new Button {
       text = "Stand"
       enabled = false
       background = java.awt.Color.darkGray
       foreground = java.awt.Color.white
     }
-    val lblStake = new Label {
+    private val lblStake = new Label {
       text = "Stake in $: "
     }
-    val txtStake = txtField
+    private val txtStake = txtField
     txtStake.enabled = false
-    val bnNewRound = new Button {
+    private val bnNewRound = new Button {
       text = "New Round"
       background = java.awt.Color.darkGray
       foreground = java.awt.Color.white
     }
-    val lblMoney = new Label {
+    private val lblMoney = new Label {
       text = "Money :" + round.humanRoundPlayer.player.money.toString
     }
-    val lblCenterDefault = new Label {
+    private val lblCenterDefault = new Label {
       icon = new ImageIcon(getClass.getResource("blackjack.png"))
     }
     // Methode um Referenz auf ein EditText zu bekommen
-    def txtField = new TextField {
+    private def txtField = new TextField {
       horizontalAlignment = Alignment.Left
     }
 
     // fülle untergeordnete Layouts
-    val gridBagPanelE = new GridBagPanel {
+    private val gridBagPanelE = new GridBagPanel {
       val c = new Constraints
 
       c.gridx = 0
@@ -68,7 +69,7 @@ object BJGui extends SimpleSwingApplication {
       background = java.awt.Color.white
     }
 
-    val gridBagPanelW = new GridBagPanel {
+    private val gridBagPanelW = new GridBagPanel {
       val c = new Constraints
 
       c.gridx = 0
@@ -92,10 +93,10 @@ object BJGui extends SimpleSwingApplication {
       background = java.awt.Color.white
     }
 
-    val flowPanelS = new FlowPanel {
+    private val flowPanelS = new FlowPanel {
       background = java.awt.Color.white
     }
-    val flowPanelN = new FlowPanel {
+    private val flowPanelN = new FlowPanel {
       background = java.awt.Color.white
     }
 
@@ -115,11 +116,11 @@ object BJGui extends SimpleSwingApplication {
     listenTo(txtStake.keys)
     listenTo(bnNewRound)
 
-    // setze reactions 
+    // setze reactions
     reactions += {
       case ButtonClicked(component) if component == bnGiveCard =>
         round = GameCoreController.hit(round)
-        updateCards(flowPanelS, round.humanRoundPlayer.hand.visibleCards)
+        updateCards(flowPanelS, round.humanRoundPlayer.hand.visibleCards())
 
       case ButtonClicked(component) if component == bnStand =>
         bnGiveCard.enabled = false
@@ -134,28 +135,28 @@ object BJGui extends SimpleSwingApplication {
           lblCenterDefault.icon = new ImageIcon(getClass.getResource("lost.jpg"))
         }
         lblMoney.text = "Money :" + round.humanRoundPlayer.player.money.toString
-        updateCards(flowPanelN, round.bankRoundPlayer.hand.allCards)
+        updateCards(flowPanelN, round.bankRoundPlayer.hand.allCards())
         // starte neue Runde
         round = GameCoreController.startNewRound(round.game)
 
       case ButtonClicked(component) if component == bnNewRound =>
-        startNewRound
+        startNewRound()
 
       case KeyPressed(_, Key.Enter, _, _) =>
-        if(!(txtStake.text.forall { _.isDigit })) {
+        if(!txtStake.text.forall { _.isDigit }) {
           Dialog.showMessage(new FlowPanel, "Please use numbers only!")
           txtStake.text = ""
         } else {
           txtStake.enabled = false
           bnGiveCard.enabled = true
           bnStand.enabled = true
-          round = GameCoreController.bet(round,(txtStake.text).toInt)
-          updateCards(flowPanelS, round.humanRoundPlayer.hand.visibleCards)
-          updateCards(flowPanelN, round.bankRoundPlayer.hand.visibleCards)
+          round = GameCoreController.bet(round,txtStake.text.toInt)
+          updateCards(flowPanelS, round.humanRoundPlayer.hand.visibleCards())
+          updateCards(flowPanelN, round.bankRoundPlayer.hand.visibleCards())
         }
     }
 
-    def startNewRound = {
+    def startNewRound() : Unit= {
       // initialisiere Spielfeld
       lblCenterDefault.icon = new ImageIcon(getClass.getResource("blackjack.png"))
       bnGiveCard.enabled = false
@@ -196,18 +197,16 @@ object BJGui extends SimpleSwingApplication {
         icon = ic
       }
 
-      return label
+      label
     }
 
-    def updateCards(flowPanel:FlowPanel, cards:List[Card] ) : FlowPanel = {
+    def updateCards(flowPanel:FlowPanel, cards:List[Card] ) : Unit = {
       flowPanel.contents.clear()
       for (card<-cards) {
         flowPanel.contents += getScaledImageLabel(card)
       }
       flowPanel.revalidate()
       flowPanel.repaint()
-
-      return flowPanel
     }
 
   }
